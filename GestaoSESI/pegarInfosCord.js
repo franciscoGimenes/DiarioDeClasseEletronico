@@ -5,6 +5,7 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const userId = localStorage.getItem('authUuid'); //pegando userID
 
+let materiasData = [];  // Array global para armazenar o estado das linhas
 let numeroMateriasTemp = 1
 let pagAtual = 0; // Inicializa a página atual como 0
 // Seleciona os elementos do modal e overlay
@@ -86,9 +87,7 @@ async function carregarPaginaModal(atual) {
                 <button id="buttonNext" onclick="salvarInfosTemporariamente(1)" type="button">Próximo</button>
             </div>
         `;
-    } else if (atual == 2) {
-
-
+    } else if (atual === 2) {
         const { data: turmas, error: turmasError } = await supabaseClient
             .from('turmas')
             .select('*');
@@ -97,24 +96,31 @@ async function carregarPaginaModal(atual) {
             console.error('Erro ao buscar dados das turmas:', turmasError || 'Nenhuma turma encontrada');
             return;
         }
-        console.log(turmas)
+
+        // Salva os valores atuais das seleções (turmas e matérias) no array global
+        document.querySelectorAll('.formRow.row2').forEach((row, index) => {
+            const turmaSelect = row.querySelector('.turmasOptions');
+            const materiaSelect = row.querySelector('.materia');
+            if (turmaSelect && materiaSelect) {
+                materiasData[index] = {
+                    turma: turmaSelect.value,
+                    materia: materiaSelect.value
+                };
+            }
+        });
 
         tituloFormulario.innerHTML = 'AULAS';
         divFormulario.innerHTML = `
             <div class="scrollAulas">
-                <div style="display: flex; flex-direction: column-reverse; width: 100%; gap: 15px">
+                <div class="divReverse" style="display: flex; flex-direction: column-reverse; width: 100%; gap: 15px">
                     <div class="formRow row2">
                         <div class="formGroup turmaGroup">
-                            <div class="professor" id="naoCadastrado">
-                                <i onclick="aumentarMateria(${atual})" class="fa-solid fa-circle-plus fa-xl"></i>
+                            <div onclick="aumentarMateria(${atual})" class="professor" id="naoCadastrado">
+                                <i class="fa-solid fa-circle-plus fa-xl"></i>
                             </div>
                         </div>
                     </div>
-                    
-                
                 </div>
-                
-                <!-- Repita a estrutura de seleções conforme necessário -->
             </div>
             <div class="botoes maisdeum">
                 <button id="buttonPreview" onclick="apagarInfosTemporarias(3)" type="button">Anterior</button>
@@ -123,56 +129,64 @@ async function carregarPaginaModal(atual) {
         `;
 
         for (let i = 0; i < numeroMateriasTemp; i++) {
-            const formRow = `<div class="formRow row2">
-                        <div class="formGroup turmaGroup">
-                            <label for="Turma">Turma</label>
-                            <select name="Turma" class="turmasOptions">
+            let scrollDiv = document.querySelector('.divReverse');
 
-                            </select>
-                        </div>
-                        <div class="formGroup materiaGroup">
-                            <label for="Materia">Matéria</label>
-                            <select name="Materia" class="materia">
-                                <option value="linguaPortuguesa">Lingua Portuguesa</option>
-                                <option value="matematica">Matematica</option>
-                                <option value="educacaoFisica">Educação Física</option>
-                                <option value="historia">História</option>
-                            </select>
-                        </div>                      
-                        <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
-                    </div>`
-            
+            const formRow = `<div class="formRow row2">
+                    <div class="formGroup turmaGroup">
+                        <label for="Turma">Turma</label>
+                        <select name="Turma" class="turmasOptions"></select>
+                    </div>
+                    <div class="formGroup materiaGroup">
+                        <label for="Materia">Matéria</label>
+                        <select name="Materia" class="materia">
+                            <option value="linguaPortuguesa">Lingua Portuguesa</option>
+                            <option value="matematica">Matematica</option>
+                            <option value="educacaoFisica">Educação Física</option>
+                            <option value="historia">História</option>
+                        </select>
+                    </div>                      
+                    <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                </div>`;
+            scrollDiv.innerHTML += formRow;
         }
 
-        let selectTurmas = document.querySelectorAll('.turmasOptions')
-        console.log(selectTurmas)
+        let selectTurmas = document.querySelectorAll('.turmasOptions');
         selectTurmas.forEach(turmaSelect => {
             turmas.forEach(turma => {
-                const option = document.createElement('option')
-                option.value = turma.nome_turma
+                const option = document.createElement('option');
+                option.value = turma.nome_turma;
+                option.textContent = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
+                    ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
+                    : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
+                turmaSelect.appendChild(option);
+            });
+        });
 
-                if (turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3) {
-                    option.textContent = `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
-                } else {
-                    option.textContent = `${turma.nome_turma[0]}°${turma.nome_turma[1]}`
-                }
-                turmaSelect.appendChild(option)
-            })
-
-        })
+        // Restaurar os valores das seleções usando o array global `materiasData`
+        document.querySelectorAll('.formRow.row2').forEach((row, index) => {
+            if (materiasData[index]) {
+                const turmaSelect = row.querySelector('.turmasOptions');
+                const materiaSelect = row.querySelector('.materia');
+                if (turmaSelect) turmaSelect.value = materiasData[index].turma;
+                if (materiaSelect) materiaSelect.value = materiasData[index].materia;
+            }
+        });
     }
-    // botaoPassar.addEventListener('click', passarPagina);
 }
 
 function diminuirMateria(atual) {
-    numeroMateriasTemp--
-    carregarPaginaModal(atual)
-}
-function aumentarMateria() {
-    numeroMateriasTemp++
-    carregarPaginaModal()
+    if (numeroMateriasTemp > 1) {
+        numeroMateriasTemp--;
+        materiasData.pop();  // Remove o último item do array `materiasData`
+        carregarPaginaModal(atual);
+    }
 }
 
+function aumentarMateria(atual) {
+    numeroMateriasTemp++;
+    materiasData.push({ turma: "", materia: "" });  // Adiciona um item vazio ao array `materiasData`
+    carregarPaginaModal(atual);
+}
 
 async function fetchCordenadorData() {
 
