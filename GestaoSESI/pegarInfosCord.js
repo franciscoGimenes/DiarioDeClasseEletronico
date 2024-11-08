@@ -16,162 +16,388 @@ const modalRecados = document.getElementById('modalRecados');
 const professores = document.querySelectorAll('.professor');
 const recados = document.querySelectorAll('.recado');
 
-async function carregarPaginaModal(atual) {
+async function carregarPaginaModal(atual, professorCadastro) {
+
     // const botaoPassar = document.getElementById('buttonNext');
     // const divFormularioContainer = document.getElementById('formularioInfos');
     const divFormulario = document.getElementById('formulario');
     const tituloFormulario = document.getElementById('titulo');
+    const { data: turmas, error: turmasError } = await supabaseClient
+        .from('turmas')
+        .select('*');
+
+    if (turmasError || !turmas?.length) {
+        console.error('Erro ao buscar dados das turmas:', turmasError || 'Nenhuma turma encontrada');
+        return;
+    }
+    const { data: materias, error: materiasError } = await supabaseClient
+        .from('materias')
+        .select('*');
+
+    if (materiasError || !materias?.length) {
+        console.error('Erro ao buscar dados das materias:', materiasError || 'Nenhuma materia encontrada');
+        return;
+    }
+
+    const professorClicado = localStorage.getItem('professorClicado')
+
+    const { data: professor, error: professorError } = await supabaseClient
+        .from('professores')
+        .select('*')
+        .eq('id', professorClicado)
+
+    if (professorError || !professor?.length) {
+        console.error('Erro ao buscar dados do professor:', professorError || 'Professor não encontrado');
+        return;
+    }
+
+    const { data: turma_materias, error: tmError } = await supabaseClient
+        .from('turmas_materias')
+        .select('*')
+        .eq('professor_id', professorClicado)
+
+    if (tmError || !turma_materias?.length) {
+        console.error('Erro ao buscar dados do professor:', tmError || 'Professor não encontrado');
+        return;
+    }
+
+    turma_materias.sort((a, b) => a.turma_id - b.turma_id);
+
+    // console.log(turma_materias)
 
 
-    if (atual == 1) {
-        tituloFormulario.innerHTML = 'DADOS DE LOGIN';
-        let nomeInfo = localStorage.getItem('nome').toLowerCase().replace(/\s+/g, "");
-        let sobrenomeInfo = localStorage.getItem('sobrenome').toLowerCase().replace(/\s+/g, "");
-        let emailEducacionalInfo = `${nomeInfo}.${sobrenomeInfo}@portalsesisp.org.br`
-        divFormulario.innerHTML = `
-            <div class="scrollAulas">
-                <div class="formRow">
-                    <div class="formGroup">
-                        <label for="EmailEducacional">Email Educacional</label>
-                        <input class="disabled" id="EmailEducacional" type="text" value="${emailEducacionalInfo}" disabled>
+
+    if (professorCadastro) {
+        if (atual == 1) {
+            tituloFormulario.innerHTML = 'DADOS DE LOGIN';
+            let nomeInfo = localStorage.getItem('nome').toLowerCase().replace(/\s+/g, "");
+            let sobrenomeInfo = localStorage.getItem('sobrenome').toLowerCase().replace(/\s+/g, "");
+            let emailEducacionalInfo = `${nomeInfo}.${sobrenomeInfo}@portalsesisp.org.br`
+            divFormulario.innerHTML = `
+                <div class="scrollAulas">
+                    <div class="formRow">
+                        <div class="formGroup">
+                            <label for="EmailEducacional">Email Educacional</label>
+                            <input class="disabled" id="EmailEducacional" type="text" value="${emailEducacionalInfo}" disabled>
+                        </div>
+                    </div>
+                    <div class="formRow row2">
+                        <div class="formGroup">
+                            <label for="Senha">Senha</label>
+                            <input id="Senha" placeholder="Escreva aqui" type="text" disabled>
+                        </div>
+                        <div class="formGroup">
+                            <label for="ConfirmarSenha">Confirmar Senha</label>
+                            <input id="ConfirmarSenha" placeholder="Escreva aqui" type="text" disabled>
+                        </div>
                     </div>
                 </div>
+                <div class="botoes maisdeum">
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(2)" type="button">Anterior</button>
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(2)" type="button">Próximo</button>
+                </div>
+            `;
+        } else if (atual == 0) {
+            tituloFormulario.innerHTML = 'DADOS PESSOAIS';
+            divFormulario.innerHTML = `
                 <div class="formRow row2">
                     <div class="formGroup">
-                        <label for="Senha">Senha</label>
-                        <input id="Senha" placeholder="Escreva aqui" type="text">
+                        <label for="Nome">Nome</label>
+                        <input id="Nome" placeholder="Escreva aqui" type="text">
                     </div>
                     <div class="formGroup">
-                        <label for="ConfirmarSenha">Confirmar Senha</label>
-                        <input id="ConfirmarSenha" placeholder="Escreva aqui" type="text">
+                        <label for="Sobrenome">Sobrenome</label>
+                        <input id="Sobrenome" placeholder="Escreva aqui" type="text">
                     </div>
                 </div>
-            </div>
-            <div class="botoes maisdeum">
-                <button id="buttonPreview" onclick="apagarInfosTemporarias(2)" type="button">Anterior</button>
-                <button id="buttonNext" onclick="salvarInfosTemporariamente(2)" type="button">Próximo</button>
-            </div>
-        `;
-    } else if (atual == 0) {
-        tituloFormulario.innerHTML = 'DADOS PESSOAIS';
-        divFormulario.innerHTML = `
-            <div class="formRow row2">
-                <div class="formGroup">
-                    <label for="Nome">Nome</label>
-                    <input id="Nome" placeholder="Escreva aqui" type="text">
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="EmailPessoal">Email Pessoal</label>
+                        <input id="EmailPessoal" placeholder="Escreva aqui" type="email">
+                    </div>
                 </div>
-                <div class="formGroup">
-                    <label for="Sobrenome">Sobrenome</label>
-                    <input id="Sobrenome" placeholder="Escreva aqui" type="text">
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="Numero">Número de celular (com DDD)</label>
+                        <input id="Numero" placeholder="11912345678" type="number">
+                    </div>
                 </div>
-            </div>
-            <div class="formRow">
-                <div class="formGroup">
-                    <label for="EmailPessoal">Email Pessoal</label>
-                    <input id="EmailPessoal" placeholder="Escreva aqui" type="email">
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="CPF">CPF</label>
+                        <input id="CPF" placeholder="Escreva sem pontuação" type="number">
+                    </div>
                 </div>
-            </div>
-            <div class="formRow">
-                <div class="formGroup">
-                    <label for="Numero">Número de celular (com DDD)</label>
-                    <input id="Numero" placeholder="11912345678" type="number">
+                <div class="botoes">
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(1)" type="button">Próximo</button>
                 </div>
-            </div>
-            <div class="formRow">
-                <div class="formGroup">
-                    <label for="CPF">CPF</label>
-                    <input id="CPF" placeholder="Escreva sem pontuação" type="number">
-                </div>
-            </div>
-            <div class="botoes">
-                <button id="buttonNext" onclick="salvarInfosTemporariamente(1)" type="button">Próximo</button>
-            </div>
-        `;
-    } else if (atual === 2) {
-        const { data: turmas, error: turmasError } = await supabaseClient
-            .from('turmas')
-            .select('*');
+            `;
+        } else if (atual === 2) {
 
-        if (turmasError || !turmas?.length) {
-            console.error('Erro ao buscar dados das turmas:', turmasError || 'Nenhuma turma encontrada');
-            return;
-        }
+            // Salva os valores atuais das seleções (turmas e matérias) no array global
+            document.querySelectorAll('.formRow.row2').forEach((row, index) => {
+                const turmaSelect = row.querySelector('.turmasOptions');
+                const materiaSelect = row.querySelector('.materia');
+                if (turmaSelect && materiaSelect) {
+                    materiasData[index] = {
+                        turma: turmaSelect.value,
+                        materia: materiaSelect.value
+                    };
+                }
+            });
 
-        // Salva os valores atuais das seleções (turmas e matérias) no array global
-        document.querySelectorAll('.formRow.row2').forEach((row, index) => {
-            const turmaSelect = row.querySelector('.turmasOptions');
-            const materiaSelect = row.querySelector('.materia');
-            if (turmaSelect && materiaSelect) {
-                materiasData[index] = {
-                    turma: turmaSelect.value,
-                    materia: materiaSelect.value
-                };
-            }
-        });
 
-        tituloFormulario.innerHTML = 'AULAS';
-        divFormulario.innerHTML = `
-            <div class="scrollAulas">
-                <div class="divReverse" style="display: flex; flex-direction: column-reverse; width: 100%; gap: 15px">
-                    <div class="formRow row2">
-                        <div class="formGroup turmaGroup">
-                            <div onclick="aumentarMateria(${atual})" class="professor" id="naoCadastrado">
-                                <i class="fa-solid fa-circle-plus fa-xl"></i>
+
+            tituloFormulario.innerHTML = 'AULAS';
+            divFormulario.innerHTML = `
+                <div class="scrollAulas">
+                    <div class="divReverse" style="display: flex; flex-direction: column; width: 100%; gap: 15px">
+                        <div class="formRow row2">
+                            <div class="formGroup turmaGroup">
+                                <div onclick="aumentarMateria(${atual})" class="professor" id="naoCadastrado">
+                                    <i class="fa-solid fa-circle-plus fa-xl"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="botoes maisdeum">
-                <button id="buttonPreview" onclick="apagarInfosTemporarias(3)" type="button">Anterior</button>
-                <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
-            </div>
-        `;
+                <div class="botoes maisdeum">
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(3)" type="button">Anterior</button>
+                    <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
+                </div>
+            `;
 
-        for (let i = 0; i < numeroMateriasTemp; i++) {
-            let scrollDiv = document.querySelector('.divReverse');
+            for (let i = 0; i < numeroMateriasTemp; i++) {
+                let scrollDiv = document.querySelector('.divReverse');
 
-            const formRow = `<div class="formRow row2">
-                    <div class="formGroup turmaGroup">
-                        <label for="Turma">Turma</label>
-                        <select name="Turma" class="turmasOptions"></select>
-                    </div>
-                    <div class="formGroup materiaGroup">
-                        <label for="Materia">Matéria</label>
-                        <select name="Materia" class="materia">
-                            <option value="linguaPortuguesa">Lingua Portuguesa</option>
-                            <option value="matematica">Matematica</option>
-                            <option value="educacaoFisica">Educação Física</option>
-                            <option value="historia">História</option>
-                        </select>
-                    </div>                      
-                    <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
-                </div>`;
-            scrollDiv.innerHTML += formRow;
-        }
+                const formRow = `<div class="formRow row2">
+                                    <div class="formGroup turmaGroup">
+                                        <label for="Turma">Turma</label>
+                                        <select name="Turma" class="turmasOptions"></select>
+                                    </div>
+                                    <div class="formGroup materiaGroup">
+                                        <label for="Materia">Matéria</label>
+                                        <select name="Materia" class="materia">
 
-        let selectTurmas = document.querySelectorAll('.turmasOptions');
-        selectTurmas.forEach(turmaSelect => {
-            turmas.forEach(turma => {
-                const option = document.createElement('option');
-                option.value = turma.nome_turma;
-                option.textContent = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
-                    ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
-                    : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
-                turmaSelect.appendChild(option);
-            });
-        });
-
-        // Restaurar os valores das seleções usando o array global `materiasData`
-        document.querySelectorAll('.formRow.row2').forEach((row, index) => {
-            if (materiasData[index]) {
-                const turmaSelect = row.querySelector('.turmasOptions');
-                const materiaSelect = row.querySelector('.materia');
-                if (turmaSelect) turmaSelect.value = materiasData[index].turma;
-                if (materiaSelect) materiaSelect.value = materiasData[index].materia;
+                                        </select>
+                                    </div>                      
+                                    <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                                </div>`;
+                scrollDiv.innerHTML += formRow;
             }
-        });
+
+            let selectTurmas = document.querySelectorAll('.turmasOptions');
+            let selectMaterias = document.querySelectorAll('.materia');
+            selectTurmas.forEach(turmaSelect => {
+                turmas.forEach(turma => {
+                    const option = document.createElement('option');
+                    option.value = turma.nome_turma;
+                    option.textContent = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
+                        ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
+                        : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
+                    turmaSelect.appendChild(option);
+                });
+            });
+            selectMaterias.forEach(materiaSelect => {
+                materias.forEach(materia => {
+                    const option = document.createElement('option');
+                    option.value = materia.nome_materia;
+                    option.textContent = materia.nome_materia;
+                    materiaSelect.appendChild(option);
+                })
+            })
+
+            // Restaurar os valores das seleções usando o array global `materiasData`
+            document.querySelectorAll('.formRow.row2').forEach((row, index) => {
+                if (materiasData[index]) {
+                    const turmaSelect = row.querySelector('.turmasOptions');
+                    const materiaSelect = row.querySelector('.materia');
+                    if (turmaSelect) turmaSelect.value = materiasData[index].turma;
+                    if (materiaSelect) materiaSelect.value = materiasData[index].materia;
+                }
+            });
+        }
+    } else {
+        if (atual == 1) {
+            tituloFormulario.innerHTML = 'DADOS DE LOGIN';
+            let nomeInfo = localStorage.getItem('nome').toLowerCase().replace(/\s+/g, "");
+            let sobrenomeInfo = localStorage.getItem('sobrenome').toLowerCase().replace(/\s+/g, "");
+            let emailEducacionalInfo = `${nomeInfo}.${sobrenomeInfo}@portalsesisp.org.br`
+            divFormulario.innerHTML = `
+                <div class="scrollAulas">
+                    <div class="formRow">
+                        <div class="formGroup">
+                            <label for="EmailEducacional">Email Educacional</label>
+                            <input class="disabled" id="EmailEducacional" type="text" value="${professor[0].email_educacional}" disabled>
+                        </div>
+                    </div>
+                    <div class="formRow row2">
+                        <div class="formGroup">
+                            <label for="Senha">Senha</label>
+                            <input class="disabled" value="${professor[0].senha}" id="Senha" placeholder="Escreva aqui" type="text" disabled>
+                        </div>
+                        <div class="formGroup">
+                            <label for="ConfirmarSenha">Confirmar Senha</label>
+                            <input class="disabled" value="${professor[0].senha}" id="ConfirmarSenha" placeholder="Escreva aqui" type="text" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="botoes maisdeum">
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(2)" type="button">Anterior</button>
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(2)" type="button">Próximo</button>
+                </div>
+            `;
+        } else if (atual == 0) {
+            tituloFormulario.innerHTML = 'DADOS PESSOAIS';
+            divFormulario.innerHTML = `
+                <div class="formRow row2">
+                    <div class="formGroup">
+                        <label for="Nome">Nome</label>
+                        <input value="${professor[0].nome}" id="Nome" placeholder="Escreva aqui" type="text">
+                    </div>
+                    <div class="formGroup">
+                        <label for="Sobrenome">Sobrenome</label>
+                        <input value="${professor[0].sobrenome}" id="Sobrenome" placeholder="Escreva aqui" type="text">
+                    </div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="EmailPessoal">Email Pessoal</label>
+                        <input value="${professor[0].email_educacional}" id="EmailPessoal" placeholder="Escreva aqui" type="email">
+                    </div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="Numero">Número de celular (com DDD)</label>
+                        <input value="${professor[0].numero_celular}" id="Numero" placeholder="11912345678" type="number">
+                    </div>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="CPF">CPF</label>
+                        <input value="${professor[0].cpf}" id="CPF" placeholder="Escreva sem pontuação" type="number">
+                    </div>
+                </div>
+                <div class="botoes">
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(1)" type="button">Próximo</button>
+                </div>
+            `;
+        } else if (atual === 2) {
+
+            // Salva os valores atuais das seleções (turmas e matérias) no array global
+
+
+            // console.log(turma_materias)
+
+            tituloFormulario.innerHTML = 'AULAS';
+            divFormulario.innerHTML = `
+                <div class="scrollAulas">
+                    <div class="divReverse" style="display: flex; flex-direction: column; width: 100%; gap: 15px">
+                        <div class="formRow row2">
+                            <div class="formGroup turmaGroup">
+                            </div>
+                            </div>
+                            </div>
+                            <div onclick="aMateria()" class="professor" id="naoCadastradoM">
+                                <i class="fa-solid fa-circle-plus fa-xl"></i>
+                            </div>
+                </div>
+                <div class="botoes maisdeum">
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(3)" type="button">Anterior</button>
+                    <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
+                </div>
+            `;
+
+
+            for (const turmaMateria of turma_materias) {
+                let scrollDiv = document.querySelector('.divReverse');
+
+                const { data: turmaOption, error: tmoError } = await supabaseClient
+                    .from('turmas')
+                    .select('*')
+                    .eq('id', turmaMateria.turma_id)
+
+                if (tmoError || !turmaOption?.length) {
+                    console.error('Erro ao buscar dados');
+                    return;
+                }
+
+                const { data: materiaOption, error: mtoError } = await supabaseClient
+                    .from('materias')
+                    .select('*')
+                    .eq('id', turmaMateria.materia_id)
+
+                if (mtoError || !materiaOption?.length) {
+                    console.error('Erro ao buscar dados ');
+                    return;
+                }
+
+                // console.log(turmaOption)
+
+
+                const formRow = `<div class="formRow row2">
+                                    <div class="formGroup turmaGroup">
+                                        <label for="Turma">Turma</label>
+                                        <select name="Turma" class="turmasOptions">
+                                            <option value="${turmaOption[0].nome_turma}">${turmaOption[0].nome_turma[0] == 1 || turmaOption[0].nome_turma[0] == 2 || turmaOption[0].nome_turma[0] == 3
+                        ? `${turmaOption[0].nome_turma[0]}°${turmaOption[0].nome_turma[1]} EM`
+                        : `${turmaOption[0].nome_turma[0]}°${turmaOption[0].nome_turma[1]}`}</option>
+                                        </select>
+                                    </div>
+                                    <div class="formGroup materiaGroup">
+                                        <label for="Materia">Matéria</label>
+                                        <select name="Materia" class="materia">
+                                            <option value="${materiaOption[0].nome_materia}">
+                                                ${materiaOption[0].nome_materia}    
+                                            </option>
+                                        </select>
+                                    </div>                      
+                                    <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                                </div>`;
+                scrollDiv.innerHTML += formRow;
+            };
+
+
+            let selectTurmas = document.querySelectorAll('.turmasOptions');
+            let selectMaterias = document.querySelectorAll('.materia');
+            selectTurmas.forEach(turmaSelect => {
+                turmas.forEach(turma => {
+                    if (!turmaSelect.querySelector(`option[value="${turma.nome_turma}"]`)) {
+                        const option = document.createElement('option');
+                        option.value = turma.nome_turma;
+                        option.textContent = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
+                            ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
+                            : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
+                        turmaSelect.appendChild(option);
+                    }
+
+                });
+            });
+            selectMaterias.forEach(materiaSelect => {
+                materias.forEach(materia => {
+                    if (!materiaSelect.querySelector(`option[value="${materia.nome_materia}"]`)) {
+                        const option = document.createElement('option');
+                        option.value = materia.nome_materia;
+                        option.textContent = materia.nome_materia;
+                        materiaSelect.appendChild(option);
+                    }
+
+                })
+            })
+
+            // Restaurar os valores das seleções usando o array global `materiasData`
+            document.querySelectorAll('.formRow.row2').forEach((row, index) => {
+                if (materiasData[index]) {
+                    const turmaSelect = row.querySelector('.turmasOptions');
+                    const materiaSelect = row.querySelector('.materia');
+                    if (turmaSelect) turmaSelect.value = materiasData[index].turma;
+                    if (materiaSelect) materiaSelect.value = materiasData[index].materia;
+                }
+            });
+        }
     }
+
+
 }
 
 function diminuirMateria(atual) {
@@ -186,6 +412,71 @@ function aumentarMateria(atual) {
     numeroMateriasTemp++;
     materiasData.push({ turma: "", materia: "" });  // Adiciona um item vazio ao array `materiasData`
     carregarPaginaModal(atual);
+}
+
+async function aMateria() {
+    const { data: turmas, error: turmasError } = await supabaseClient
+        .from('turmas')
+        .select('*');
+
+    if (turmasError || !turmas?.length) {
+        console.error('Erro ao buscar dados das turmas:', turmasError || 'Nenhuma turma encontrada');
+        return;
+    }
+    const { data: materias, error: materiasError } = await supabaseClient
+        .from('materias')
+        .select('*');
+
+    if (materiasError || !materias?.length) {
+        console.error('Erro ao buscar dados das materias:', materiasError || 'Nenhuma materia encontrada');
+        return;
+    }
+
+
+    let scrollDiv = document.querySelector('.divReverse');
+    const formRow = `<div class="formRow row2">
+                                    <div class="formGroup turmaGroup">
+                                        <label for="Turma">Turma</label>
+                                        <select name="Turma" class="turmasOptions">
+
+                                        </select>
+                                    </div>
+                                    <div class="formGroup materiaGroup">
+                                        <label for="Materia">Matéria</label>
+                                        <select name="Materia" class="materia">
+
+                                        </select>
+                                    </div>                      
+                                    <i onclick="" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                                </div>`;
+    scrollDiv.innerHTML += formRow;
+
+    let selectTurmas = document.querySelectorAll('.turmasOptions');
+    let selectMaterias = document.querySelectorAll('.materia');
+    selectTurmas.forEach(turmaSelect => {
+        turmas.forEach(turma => {
+            if (!turmaSelect.querySelector(`option[value="${turma.nome_turma}"]`)) {
+                const option = document.createElement('option');
+                option.value = turma.nome_turma;
+                option.textContent = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
+                    ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
+                    : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
+                turmaSelect.appendChild(option);
+            }
+
+        });
+    });
+    selectMaterias.forEach(materiaSelect => {
+        materias.forEach(materia => {
+            if (!materiaSelect.querySelector(`option[value="${materia.nome_materia}"]`)) {
+                const option = document.createElement('option');
+                option.value = materia.nome_materia;
+                option.textContent = materia.nome_materia;
+                materiaSelect.appendChild(option);
+            }
+
+        })
+    })
 }
 
 async function fetchCordenadorData() {
@@ -223,11 +514,10 @@ async function fetchProfessoresData() {
     // Busca os dados do professor usando o ID encontrado
     const { data: professores, error: professoresError } = await supabaseClient
         .from('professores')
-        .select('*')
-
+        .select('*');
 
     if (professoresError || !professores?.length) {
-        console.error('Erro ao buscar dados do cordenador:', professoresError || 'Professor não encontrado');
+        console.error('Erro ao buscar dados do coordenador:', professoresError || 'Professor não encontrado');
         return;
     }
 
@@ -246,12 +536,15 @@ async function fetchProfessoresData() {
         // Cria um elemento de título para o nome do professor
         const title = document.createElement('h3');
         title.className = 'title';
-        title.textContent = professor.nome; // Define o nome do professor
-        professorDiv.setAttribute('data-professorID', professor.id)
+        title.textContent = `${professor.nome} ${professor.sobrenome[0]}.`; // Define o nome do professor
+        professorDiv.setAttribute('data-professorID', professor.id);
 
         // Anexa o título à div do professor
         professorDiv.appendChild(title);
+
+        // Adiciona o evento de clique para abrir o modal e passar o professorID
         professorDiv.addEventListener('click', abrirModalProfessores);
+
         // Anexa a div do professor à lista
         listaProfessores.appendChild(professorDiv);
     });
@@ -261,7 +554,7 @@ async function fetchProfessoresData() {
     naoCadastradoDiv.id = 'naoCadastrado';
     naoCadastradoDiv.innerHTML = '<i class="fa-solid fa-circle-plus fa-xl"></i>'; // Ícone para adicionar um novo professor
     naoCadastradoDiv.className = 'professor'
-    naoCadastradoDiv.addEventListener('click', abrirModalProfessores);
+    naoCadastradoDiv.addEventListener('click', abrirModalCadastroProfessores);
 
 
     // Anexa a div #naoCadastrado à lista
@@ -340,7 +633,19 @@ async function verificarAutenticacao() {
     }
 }
 
-function abrirModalProfessores() {
+function abrirModalCadastroProfessores() {
+    modalProfessores.style.display = 'flex';
+    overlay.style.display = 'block';
+    pagAtual = 0
+    numeroMateriasTemp = 1
+    carregarPaginaModal(pagAtual, true); // Carrega a primeira página ao abrir o modal
+}
+
+function abrirModalProfessores(event) {
+
+    const professorID = event.currentTarget.getAttribute('data-professorID');
+    console.log('Professor ID clicado:', professorID);
+    localStorage.setItem('professorClicado', professorID)
     modalProfessores.style.display = 'flex';
     overlay.style.display = 'block';
     pagAtual = 0

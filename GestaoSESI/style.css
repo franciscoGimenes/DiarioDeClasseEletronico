@@ -2,6 +2,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+
+/* Estilo de rolagem para navegadores Webkit (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #54595E;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+
 /* Reset CSS */
 * {
     box-sizing: border-box;
@@ -77,6 +93,7 @@ header {
 
 }
 
+
 .infosHeader .infos {
     display: flex;
     flex-direction: column;
@@ -91,7 +108,7 @@ header {
 
 .infosHeader .infos .title,
 .infosHeader .infos .sub {
-    font-size: 18px;
+    font-size: 1.125rem;
 }
 
 .infosHeader .infos .sub {
@@ -107,7 +124,7 @@ main {
 }
 
 aside .titleAside {
-    font-size: 32px;
+    font-size: 2rem;
 }
 
 #listaProfessores {
@@ -137,7 +154,7 @@ div.professor {
     border-radius: 8px 8px 8px 0;
     padding: 12px 38px;
     box-shadow: -5px 12px 12px rgba(0, 0, 0, 0.25);
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 600;
     cursor: pointer;
     width: 80%;
@@ -155,6 +172,13 @@ div.professor:hover {
 #naoCadastrado {
     background-color: #B1A7A6;
     padding: 25px 0;
+
+}
+
+#naoCadastradoM {
+    background-color: #dadada;
+    /* padding: 25px 0; */
+    width: 100%;
 }
 
 #centralDiv {
@@ -165,12 +189,13 @@ div.professor:hover {
     justify-content: space-between;
     padding-bottom: 10px;
     padding: 0 40px;
+    gap: 10px;
 }
 
 .frases {
     display: flex;
     gap: 40px;
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: 600;
     width: 100%;
     justify-content: center;
@@ -196,7 +221,7 @@ div.professor:hover {
     align-items: center;
     justify-content: center;
     padding: 10px 14px;
-    font-size: 18px;
+    font-size: 1.125rem;
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
     /* Adiciona transição */
     cursor: pointer;
@@ -342,7 +367,7 @@ i.material-icons {
     color: #ffffff;
     border: none;
     padding: 16px 55px;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .formulario{
@@ -389,7 +414,7 @@ i.material-icons {
     width: 100%;
 }
 .textos .titulo{
-    font-size: 48px;
+    font-size: 3rem;
     font-family: "Bebas Neue", sans-serif;
     width: 70%;
     color: #ffffff;
@@ -435,7 +460,7 @@ i.material-icons {
 .formGroup select{
     border-radius: 8px;
     padding: 16px;
-    font-size: 16px;
+    font-size: 1rem;
 }
 select.materia{
     width: 100%;
@@ -460,7 +485,7 @@ select.materia{
     padding: 46px 68px;
 }
 #modalRecados .data{
-    font-size: 24px;
+    font-size: 1.5rem;
 }
 /* Sair */
 #salvar {
@@ -476,7 +501,7 @@ select.materia{
   }
   
   #salvar p{
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   #iconDoneAll {
@@ -494,16 +519,108 @@ select.materia{
 
 }
 .conteudoRecado .title{
-    font-size: 48px;
+    font-size: 3rem;
 }
 .conteudoTexto{
     display: flex;
     flex-direction: column;
     align-items:start;
     gap: 27px;
-    font-size: 24px;
+    font-size: 1.5rem;
 }
 .conteudoTexto .addAnexo{
     opacity: 0.5;
     cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+    main {
+        flex-direction: column;
+    }
+
+    #centralDiv, #salasDiv, #professoresDiv {
+        width: 100%;
+    }
+    .recados{
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+div.professor:hover, .recado:hover, .turma:hover {
+    transform: scale(1.02);
+}
+
+button:focus, input:focus {
+    outline: 2px solid #A4161A;
+    outline-offset: 4px;
+}
+
+.model {
+    display: none;
+    width: 80%;
+    height: 90%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    background-color: #fff;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Ajuste o modal para telas pequenas */
+@media (max-width: 768px) {
+    .model {
+        width: 95%;
+        height: auto;
+        max-height: 90%;
+        padding: 15px;
+        border-radius: 8px;
+    }
+}
+
+/* Ajuste dos elementos internos do modal */
+.formulario {
+    width: 100%; /* Use 100% para ajustar ao modal */
+    gap: 10px;
+    padding: 10px;
+}
+
+.scrollAulas,
+.scrollAulasSelect {
+    width: 100%; /* Ajuste para 100% para responsividade */
+    max-height: 70vh; /* Limite de altura para evitar que ocupe a tela toda */
+}
+
+.formularioInfos {
+    padding: 0 10px;
+    gap: 10px;
+}
+
+.textos .titulo {
+    font-size: 2rem; /* Reduza o tamanho da fonte em telas menores */
+}
+
+/* Altere o layout de colunas para linhas em telas pequenas */
+@media (max-width: 768px) {
+    .formulario {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .formularioInfos {
+        width: 100%;
+        padding: 0;
+    }
+    .textos {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+    .textos .titulo {
+        font-size: 1.5rem;
+    }
 }
