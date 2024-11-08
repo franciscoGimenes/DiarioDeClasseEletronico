@@ -93,7 +93,6 @@ header {
 
 }
 
-
 .infosHeader .infos {
     display: flex;
     flex-direction: column;
@@ -108,7 +107,7 @@ header {
 
 .infosHeader .infos .title,
 .infosHeader .infos .sub {
-    font-size: 1.125rem;
+    font-size: 18px;
 }
 
 .infosHeader .infos .sub {
@@ -124,7 +123,7 @@ main {
 }
 
 aside .titleAside {
-    font-size: 2rem;
+    font-size: 32px;
 }
 
 #listaProfessores {
@@ -154,7 +153,7 @@ div.professor {
     border-radius: 8px 8px 8px 0;
     padding: 12px 38px;
     box-shadow: -5px 12px 12px rgba(0, 0, 0, 0.25);
-    font-size: 1.125rem;
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
     width: 80%;
@@ -172,9 +171,7 @@ div.professor:hover {
 #naoCadastrado {
     background-color: #B1A7A6;
     padding: 25px 0;
-
 }
-
 #naoCadastradoM {
     background-color: #dadada;
     /* padding: 25px 0; */
@@ -189,13 +186,12 @@ div.professor:hover {
     justify-content: space-between;
     padding-bottom: 10px;
     padding: 0 40px;
-    gap: 10px;
 }
 
 .frases {
     display: flex;
     gap: 40px;
-    font-size: 1.5rem;
+    font-size: 24px;
     font-weight: 600;
     width: 100%;
     justify-content: center;
@@ -221,7 +217,7 @@ div.professor:hover {
     align-items: center;
     justify-content: center;
     padding: 10px 14px;
-    font-size: 1.125rem;
+    font-size: 18px;
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
     /* Adiciona transição */
     cursor: pointer;
@@ -367,7 +363,7 @@ i.material-icons {
     color: #ffffff;
     border: none;
     padding: 16px 55px;
-    font-size: 1rem;
+    font-size: 16px;
 }
 
 .formulario{
@@ -390,6 +386,7 @@ i.material-icons {
     height: 90%;
     overflow-y: auto;
     scrollbar-width: none;
+
 }
 .scrollAulasSelect{
     width: 600px;
@@ -414,7 +411,7 @@ i.material-icons {
     width: 100%;
 }
 .textos .titulo{
-    font-size: 3rem;
+    font-size: 48px;
     font-family: "Bebas Neue", sans-serif;
     width: 70%;
     color: #ffffff;
@@ -460,7 +457,7 @@ i.material-icons {
 .formGroup select{
     border-radius: 8px;
     padding: 16px;
-    font-size: 1rem;
+    font-size: 16px;
 }
 select.materia{
     width: 100%;
@@ -485,7 +482,7 @@ select.materia{
     padding: 46px 68px;
 }
 #modalRecados .data{
-    font-size: 1.5rem;
+    font-size: 24px;
 }
 /* Sair */
 #salvar {
@@ -501,7 +498,7 @@ select.materia{
   }
   
   #salvar p{
-    font-size: 1.125rem;
+    font-size: 18px;
   }
 
   #iconDoneAll {
@@ -519,14 +516,14 @@ select.materia{
 
 }
 .conteudoRecado .title{
-    font-size: 3rem;
+    font-size: 48px;
 }
 .conteudoTexto{
     display: flex;
     flex-direction: column;
     align-items:start;
     gap: 27px;
-    font-size: 1.5rem;
+    font-size: 24px;
 }
 .conteudoTexto .addAnexo{
     opacity: 0.5;

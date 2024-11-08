@@ -15,9 +15,10 @@ const modalRecados = document.getElementById('modalRecados');
 // Seleciona todos os professores e recados
 const professores = document.querySelectorAll('.professor');
 const recados = document.querySelectorAll('.recado');
+let formRows = 0
 
 async function carregarPaginaModal(atual, professorCadastro) {
-
+    formRows = 0
     // const botaoPassar = document.getElementById('buttonNext');
     // const divFormularioContainer = document.getElementById('formularioInfos');
     const divFormulario = document.getElementById('formulario');
@@ -57,17 +58,16 @@ async function carregarPaginaModal(atual, professorCadastro) {
         .eq('professor_id', professorClicado)
 
     if (tmError || !turma_materias?.length) {
-        console.error('Erro ao buscar dados do professor:', tmError || 'Professor não encontrado');
+        console.error('Erro ao buscar dados das turmas:', tmError || 'turmas não encontradas');
         return;
     }
-
     turma_materias.sort((a, b) => a.turma_id - b.turma_id);
 
     // console.log(turma_materias)
 
 
 
-    if (professorCadastro) {
+    if (professorCadastro == true) {
         if (atual == 1) {
             tituloFormulario.innerHTML = 'DADOS DE LOGIN';
             let nomeInfo = localStorage.getItem('nome').toLowerCase().replace(/\s+/g, "");
@@ -84,17 +84,17 @@ async function carregarPaginaModal(atual, professorCadastro) {
                     <div class="formRow row2">
                         <div class="formGroup">
                             <label for="Senha">Senha</label>
-                            <input id="Senha" placeholder="Escreva aqui" type="text" disabled>
+                            <input id="Senha" placeholder="Escreva aqui" type="text" >
                         </div>
                         <div class="formGroup">
                             <label for="ConfirmarSenha">Confirmar Senha</label>
-                            <input id="ConfirmarSenha" placeholder="Escreva aqui" type="text" disabled>
+                            <input id="ConfirmarSenha" placeholder="Escreva aqui" type="text" >
                         </div>
                     </div>
                 </div>
                 <div class="botoes maisdeum">
-                    <button id="buttonPreview" onclick="apagarInfosTemporarias(2)" type="button">Anterior</button>
-                    <button id="buttonNext" onclick="salvarInfosTemporariamente(2)" type="button">Próximo</button>
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(2, ${professorCadastro})" type="button">Anterior</button>
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(2, ${professorCadastro})" type="button">Próximo</button>
                 </div>
             `;
         } else if (atual == 0) {
@@ -129,7 +129,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                     </div>
                 </div>
                 <div class="botoes">
-                    <button id="buttonNext" onclick="salvarInfosTemporariamente(1)" type="button">Próximo</button>
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(1, ${professorCadastro})" type="button">Próximo</button>
                 </div>
             `;
         } else if (atual === 2) {
@@ -154,37 +154,37 @@ async function carregarPaginaModal(atual, professorCadastro) {
                     <div class="divReverse" style="display: flex; flex-direction: column; width: 100%; gap: 15px">
                         <div class="formRow row2">
                             <div class="formGroup turmaGroup">
-                                <div onclick="aumentarMateria(${atual})" class="professor" id="naoCadastrado">
-                                    <i class="fa-solid fa-circle-plus fa-xl"></i>
-                                </div>
                             </div>
-                        </div>
-                    </div>
+                            </div>
+                            </div>
+                            <div onclick="aMateria()" class="professor" id="naoCadastradoM">
+                                <i class="fa-solid fa-circle-plus fa-xl"></i>
+                            </div>
                 </div>
                 <div class="botoes maisdeum">
-                    <button id="buttonPreview" onclick="apagarInfosTemporarias(3)" type="button">Anterior</button>
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(3, ${professorCadastro})" type="button">Anterior</button>
                     <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
                 </div>
             `;
 
-            for (let i = 0; i < numeroMateriasTemp; i++) {
-                let scrollDiv = document.querySelector('.divReverse');
+            // for (let i = 0; i < numeroMateriasTemp; i++) {
+            //     let scrollDiv = document.querySelector('.divReverse');
 
-                const formRow = `<div class="formRow row2">
-                                    <div class="formGroup turmaGroup">
-                                        <label for="Turma">Turma</label>
-                                        <select name="Turma" class="turmasOptions"></select>
-                                    </div>
-                                    <div class="formGroup materiaGroup">
-                                        <label for="Materia">Matéria</label>
-                                        <select name="Materia" class="materia">
+            //     const formRow = `<div class="formRow row2">
+            //                         <div class="formGroup turmaGroup">
+            //                             <label for="Turma">Turma</label>
+            //                             <select name="Turma" class="turmasOptions"></select>
+            //                         </div>
+            //                         <div class="formGroup materiaGroup">
+            //                             <label for="Materia">Matéria</label>
+            //                             <select name="Materia" class="materia">
 
-                                        </select>
-                                    </div>                      
-                                    <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
-                                </div>`;
-                scrollDiv.innerHTML += formRow;
-            }
+            //                             </select>
+            //                         </div>                      
+            //                         <i onclick="diminuirMateria(${atual}, ${professorCadastro})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+            //                     </div>`;
+            //     scrollDiv.innerHTML += formRow;
+            // }
 
             let selectTurmas = document.querySelectorAll('.turmasOptions');
             let selectMaterias = document.querySelectorAll('.materia');
@@ -243,8 +243,8 @@ async function carregarPaginaModal(atual, professorCadastro) {
                     </div>
                 </div>
                 <div class="botoes maisdeum">
-                    <button id="buttonPreview" onclick="apagarInfosTemporarias(2)" type="button">Anterior</button>
-                    <button id="buttonNext" onclick="salvarInfosTemporariamente(2)" type="button">Próximo</button>
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(2, ${professorCadastro})" type="button">Anterior</button>
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(2, ${professorCadastro})" type="button">Próximo</button>
                 </div>
             `;
         } else if (atual == 0) {
@@ -279,7 +279,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                     </div>
                 </div>
                 <div class="botoes">
-                    <button id="buttonNext" onclick="salvarInfosTemporariamente(1)" type="button">Próximo</button>
+                    <button id="buttonNext" onclick="salvarInfosTemporariamente(1, ${professorCadastro})" type="button">Próximo</button>
                 </div>
             `;
         } else if (atual === 2) {
@@ -303,7 +303,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                             </div>
                 </div>
                 <div class="botoes maisdeum">
-                    <button id="buttonPreview" onclick="apagarInfosTemporarias(3)" type="button">Anterior</button>
+                    <button id="buttonPreview" onclick="apagarInfosTemporarias(3, ${professorCadastro})" type="button">Anterior</button>
                     <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
                 </div>
             `;
@@ -335,7 +335,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                 // console.log(turmaOption)
 
 
-                const formRow = `<div class="formRow row2">
+                const formRow = `<div class="formRow row2 formRow${formRows}">
                                     <div class="formGroup turmaGroup">
                                         <label for="Turma">Turma</label>
                                         <select name="Turma" class="turmasOptions">
@@ -352,9 +352,11 @@ async function carregarPaginaModal(atual, professorCadastro) {
                                             </option>
                                         </select>
                                     </div>                      
-                                    <i onclick="diminuirMateria(${atual})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                                    <i onclick="dMateria(${formRows})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
                                 </div>`;
                 scrollDiv.innerHTML += formRow;
+                formRows++
+                addChangeEvent()
             };
 
 
@@ -400,18 +402,18 @@ async function carregarPaginaModal(atual, professorCadastro) {
 
 }
 
-function diminuirMateria(atual) {
+function diminuirMateria(atual, cadastro) {
     if (numeroMateriasTemp > 1) {
         numeroMateriasTemp--;
         materiasData.pop();  // Remove o último item do array `materiasData`
-        carregarPaginaModal(atual);
+        carregarPaginaModal(atual, cadastro);
     }
 }
 
-function aumentarMateria(atual) {
+function aumentarMateria(atual, cadastro) {
     numeroMateriasTemp++;
     materiasData.push({ turma: "", materia: "" });  // Adiciona um item vazio ao array `materiasData`
-    carregarPaginaModal(atual);
+    carregarPaginaModal(atual, cadastro);
 }
 
 async function aMateria() {
@@ -434,7 +436,7 @@ async function aMateria() {
 
 
     let scrollDiv = document.querySelector('.divReverse');
-    const formRow = `<div class="formRow row2">
+    const formRow = `<div class="formRow row2 formRow${formRows}">
                                     <div class="formGroup turmaGroup">
                                         <label for="Turma">Turma</label>
                                         <select name="Turma" class="turmasOptions">
@@ -447,10 +449,10 @@ async function aMateria() {
 
                                         </select>
                                     </div>                      
-                                    <i onclick="" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                                    <i onclick="dMateria(${formRows})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
                                 </div>`;
     scrollDiv.innerHTML += formRow;
-
+    formRows++
     let selectTurmas = document.querySelectorAll('.turmasOptions');
     let selectMaterias = document.querySelectorAll('.materia');
     selectTurmas.forEach(turmaSelect => {
@@ -477,6 +479,18 @@ async function aMateria() {
 
         })
     })
+    addChangeEvent()
+}
+
+async function dMateria(f) {
+
+    let scrollDiv = document.querySelector('.divReverse');
+    const formRow = document.querySelector(`.formRow${f}`);
+    if (formRow) {
+        formRow.remove();
+    }
+    addChangeEvent()
+
 }
 
 async function fetchCordenadorData() {
@@ -650,7 +664,7 @@ function abrirModalProfessores(event) {
     overlay.style.display = 'block';
     pagAtual = 0
     numeroMateriasTemp = 1
-    carregarPaginaModal(pagAtual); // Carrega a primeira página ao abrir o modal
+    carregarPaginaModal(pagAtual, false); // Carrega a primeira página ao abrir o modal
 }
 
 // Função para fechar o modal
@@ -685,25 +699,25 @@ recados.forEach(recado => {
 // Fecha o modal ao clicar fora dele (no overlay)
 overlay.addEventListener('click', fecharModal);
 
-function voltarPagina() {
+function voltarPagina(cadastro) {
     if (pagAtual == 0) {
         return;
     } else {
         pagAtual--;
     }
-    carregarPaginaModal(pagAtual);
+    carregarPaginaModal(pagAtual, cadastro);
 }
 
-function passarPagina() {
+function passarPagina(cadastro) {
     if (pagAtual == 2) {
         return;
     } else {
         pagAtual++;
     }
-    carregarPaginaModal(pagAtual);
+    carregarPaginaModal(pagAtual, cadastro);
 }
 
-function salvarInfosTemporariamente(form) {
+function salvarInfosTemporariamente(form, cadastro) {
     if (form == 1) {
         let nome = document.getElementById('Nome').value
         let sobrenome = document.getElementById('Sobrenome').value
@@ -739,9 +753,9 @@ function salvarInfosTemporariamente(form) {
             return;
         }
     }
-    passarPagina()
+    passarPagina(cadastro)
 }
-function apagarInfosTemporarias(form) {
+function apagarInfosTemporarias(form, cadastro) {
     if (form === 2) {
         localStorage.setItem('nome', '')
         localStorage.setItem('sobrenome', '')
@@ -752,8 +766,77 @@ function apagarInfosTemporarias(form) {
     localStorage.setItem('senha', '')
     localStorage.setItem('emailEducacional', '')
 
-    voltarPagina()
+    voltarPagina(cadastro)
 }
+
+
+let selectTurmas = document.querySelectorAll('.turmasOptions');
+let selectMaterias = document.querySelectorAll('.materia');
+
+async function addChangeEvent() {
+    const { data: turmas, error: turmasError } = await supabaseClient
+        .from('turmas')
+        .select('*');
+
+    if (turmasError || !turmas?.length) {
+        console.error('Erro ao buscar dados das turmas:', turmasError || 'Nenhuma turma encontrada');
+        return;
+    }
+    const { data: materias, error: materiasError } = await supabaseClient
+        .from('materias')
+        .select('*');
+
+    if (materiasError || !materias?.length) {
+        console.error('Erro ao buscar dados das materias:', materiasError || 'Nenhuma materia encontrada');
+        return;
+    }
+
+    let selectTurmas = document.querySelectorAll('.turmasOptions');
+    let selectMaterias = document.querySelectorAll('.materia');
+    selectTurmas.forEach(turmaSelect => {
+        turmaSelect.addEventListener('change', (event) => {
+            const materiaSel = event.target.value
+            // console.log("Turma selecionada:", materiaSel);
+            turmaSelect.innerHTML = `<option value="${materiaSel}">${materiaSel[0] == 1 || materiaSel[0] == 2 || materiaSel[0] == 3
+                ? `${materiaSel[0]}°${materiaSel[1]} EM`
+                : `${materiaSel[0]}°${materiaSel[1]}`}</option>`
+
+            turmas.forEach(turma => {
+                if (!turmaSelect.querySelector(`option[value="${turma.nome_turma}"]`)) {
+                    const option = document.createElement('option');
+                    option.value = turma.nome_turma;
+                    option.textContent = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
+                        ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
+                        : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
+                    turmaSelect.appendChild(option);
+                }
+
+            });
+        });
+
+    });
+    selectMaterias.forEach(materiaSelect => {
+        materiaSelect.addEventListener('change', (event) => {
+            const materiaSel = event.target.value
+            // console.log("materia selecionada:", materiaSel);
+            materiaSelect.innerHTML = `<option value="${materiaSel}">
+                ${materiaSel}    
+                </option>`
+
+            materias.forEach(materia => {
+                if (!materiaSelect.querySelector(`option[value="${materia.nome_materia}"]`)) {
+                    const option = document.createElement('option');
+                    option.value = materia.nome_materia;
+                    option.textContent = materia.nome_materia;
+                    materiaSelect.appendChild(option);
+                }
+
+            })
+        });
+    })
+}
+
+
 
 fetchProfessoresData()
 fetchCordenadorData()
