@@ -15,10 +15,122 @@ const modalRecados = document.getElementById('modalRecados');
 // Seleciona todos os professores e recados
 const professores = document.querySelectorAll('.professor');
 const recados = document.querySelectorAll('.recado');
+const trashIcon = document.getElementById('exclu')
 let formRows = 0
 
-async function carregarPaginaModal(atual, professorCadastro) {
+function fecharModal() {
+    modalProfessores.style.display = 'none';
+    modalRecados.style.display = 'none';
+    overlay.style.display = 'none';
+    pagAtual = 0
     formRows = 0
+
+    localStorage.setItem('nome', '')
+    localStorage.setItem('sobrenome', '')
+    localStorage.setItem('emailPessoal', '')
+    localStorage.setItem('numero', '')
+    localStorage.setItem('cpf', '')
+    localStorage.setItem('senha', '')
+    localStorage.setItem('emailEducacional', '')
+}
+async function finalizar(professorCadastro) {
+    if(professorCadastro){
+        const turmasCadastro = Array.from(document.querySelectorAll('.turmasOptions')).map(select => select.value);
+        const materiasCadastro = Array.from(document.querySelectorAll('.materia')).map(select => select.value);
+
+        const email_educacional = localStorage.getItem('emailEducacional');
+        const senha = localStorage.getItem('senha');
+        const emailPessoal = localStorage.getItem('emailPessoal');
+        const nome = localStorage.getItem('nome');
+        const sobrenome = localStorage.getItem('sobrenome');
+        const numero = localStorage.getItem('numero');
+        const cpf = localStorage.getItem('cpf');
+
+        try {
+            const response = await fetch('http://localhost:3000/sigin_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    professorEmail: email_educacional,
+                    professorSenha: senha,
+                    professorEmailPessoal: emailPessoal,
+                    professorNome: nome,
+                    professorSobrenome: sobrenome,
+                    professorNumero: numero,
+                    professorCpf: cpf,
+                    arrayTurmas: turmasCadastro,
+                    arrayMaterias: materiasCadastro
+                }),
+            });
+
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                console.error('Erro ao cadastrar usuário e dados associados:', errorResponse.error);
+                alert('Erro ao cadastrar o professor: ' + errorResponse.error);
+                return;
+            }
+
+            const successMessage = await response.json();
+            console.log(successMessage.message);
+            alert('Usuário e dados associados foram cadastrados com sucesso!');
+        } catch (error) {
+            console.error('Erro ao realizar cadastro:', error.message);
+            alert('Erro ao realizar cadastro: ' + error.message);
+        }
+    };
+
+    fecharModal();
+    location.reload();
+
+}
+
+// Função para excluir o usuário e os dados relacionados
+trashIcon.addEventListener('click', async () => {
+    const professorClicadoApagar = localStorage.getItem('professorClicado');
+
+    if (!professorClicadoApagar) {
+        alert('ID do professor não encontrado.');
+        return;
+    }
+
+    try {
+        // Envia a requisição POST para o servidor com o professorId
+        const response = await fetch('http://localhost:3000/delete-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ professorId: professorClicadoApagar }), // Certifique-se de que a chave seja professorId
+        });
+
+        // Verifica se a resposta foi bem-sucedida
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            console.error('Erro ao excluir usuário e dados associados:', errorResponse.error);
+            alert('Erro ao excluir o professor: ' + errorResponse.error);
+            return;
+        }
+
+        const successMessage = await response.json();
+        console.log(successMessage.message);
+        alert('Usuário e dados associados foram excluídos com sucesso!');
+    } catch (error) {
+        console.error('Erro ao realizar exclusão:', error.message);
+        alert('Erro ao realizar exclusão: ' + error.message);
+    }
+
+    fecharModal();
+    location.reload();
+});
+
+
+
+
+
+async function carregarPaginaModal(atual, professorCadastro) {
+
     // const botaoPassar = document.getElementById('buttonNext');
     // const divFormularioContainer = document.getElementById('formularioInfos');
     const divFormulario = document.getElementById('formulario');
@@ -40,34 +152,14 @@ async function carregarPaginaModal(atual, professorCadastro) {
         return;
     }
 
-    const professorClicado = localStorage.getItem('professorClicado')
 
-    const { data: professor, error: professorError } = await supabaseClient
-        .from('professores')
-        .select('*')
-        .eq('id', professorClicado)
-
-    if (professorError || !professor?.length) {
-        console.error('Erro ao buscar dados do professor:', professorError || 'Professor não encontrado');
-        return;
-    }
-
-    const { data: turma_materias, error: tmError } = await supabaseClient
-        .from('turmas_materias')
-        .select('*')
-        .eq('professor_id', professorClicado)
-
-    if (tmError || !turma_materias?.length) {
-        console.error('Erro ao buscar dados das turmas:', tmError || 'turmas não encontradas');
-        return;
-    }
-    turma_materias.sort((a, b) => a.turma_id - b.turma_id);
 
     // console.log(turma_materias)
 
 
 
-    if (professorCadastro == true) {
+    if (professorCadastro) {
+        trashIcon.style = 'display: none;'
         if (atual == 1) {
             tituloFormulario.innerHTML = 'DADOS DE LOGIN';
             let nomeInfo = localStorage.getItem('nome').toLowerCase().replace(/\s+/g, "");
@@ -75,6 +167,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
             let emailEducacionalInfo = `${nomeInfo}.${sobrenomeInfo}@portalsesisp.org.br`
             divFormulario.innerHTML = `
                 <div class="scrollAulas">
+                
                     <div class="formRow">
                         <div class="formGroup">
                             <label for="EmailEducacional">Email Educacional</label>
@@ -163,7 +256,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                 </div>
                 <div class="botoes maisdeum">
                     <button id="buttonPreview" onclick="apagarInfosTemporarias(3, ${professorCadastro})" type="button">Anterior</button>
-                    <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
+                    <button id="buttonFinish" onclick="finalizar(${professorCadastro})" type="button">Finalizar</button>
                 </div>
             `;
 
@@ -181,7 +274,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
 
             //                             </select>
             //                         </div>                      
-            //                         <i onclick="diminuirMateria(${atual}, ${professorCadastro})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+            //                         <i onclick="dMateria(${formRows})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
             //                     </div>`;
             //     scrollDiv.innerHTML += formRow;
             // }
@@ -218,6 +311,32 @@ async function carregarPaginaModal(atual, professorCadastro) {
             });
         }
     } else {
+        const professorClicado = localStorage.getItem('professorClicado')
+
+        const { data: professor, error: professorError } = await supabaseClient
+            .from('professores')
+            .select('*')
+            .eq('id', professorClicado)
+    
+        if (professorError || !professor?.length) {
+            console.error('Erro ao buscar dados do professor:', professorError || 'Professor não encontrado');
+            return;
+        }
+    
+        const { data: turma_materias, error: tmError } = await supabaseClient
+            .from('turmas_materias')
+            .select('*')
+            .eq('professor_id', professorClicado)
+    
+        if (tmError || !turma_materias?.length) {
+            console.error('Erro ao buscar dados do professor:', tmError || 'Professor não encontrado');
+            return;
+        }
+    
+        turma_materias.sort((a, b) => a.turma_id - b.turma_id);
+        trashIcon.style = 'display: block;'
+        
+
         if (atual == 1) {
             tituloFormulario.innerHTML = 'DADOS DE LOGIN';
             let nomeInfo = localStorage.getItem('nome').toLowerCase().replace(/\s+/g, "");
@@ -225,6 +344,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
             let emailEducacionalInfo = `${nomeInfo}.${sobrenomeInfo}@portalsesisp.org.br`
             divFormulario.innerHTML = `
                 <div class="scrollAulas">
+               
                     <div class="formRow">
                         <div class="formGroup">
                             <label for="EmailEducacional">Email Educacional</label>
@@ -355,8 +475,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                                     <i onclick="dMateria(${formRows})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
                                 </div>`;
                 scrollDiv.innerHTML += formRow;
-                formRows++
-                addChangeEvent()
+                formRows++;
             };
 
 
@@ -402,18 +521,18 @@ async function carregarPaginaModal(atual, professorCadastro) {
 
 }
 
-function diminuirMateria(atual, cadastro) {
+function diminuirMateria(atual) {
     if (numeroMateriasTemp > 1) {
         numeroMateriasTemp--;
         materiasData.pop();  // Remove o último item do array `materiasData`
-        carregarPaginaModal(atual, cadastro);
+        carregarPaginaModal(atual);
     }
 }
 
-function aumentarMateria(atual, cadastro) {
+function aumentarMateria(atual) {
     numeroMateriasTemp++;
     materiasData.push({ turma: "", materia: "" });  // Adiciona um item vazio ao array `materiasData`
-    carregarPaginaModal(atual, cadastro);
+    carregarPaginaModal(atual);
 }
 
 async function aMateria() {
@@ -437,22 +556,22 @@ async function aMateria() {
 
     let scrollDiv = document.querySelector('.divReverse');
     const formRow = `<div class="formRow row2 formRow${formRows}">
-                                    <div class="formGroup turmaGroup">
-                                        <label for="Turma">Turma</label>
-                                        <select name="Turma" class="turmasOptions">
-
-                                        </select>
-                                    </div>
-                                    <div class="formGroup materiaGroup">
-                                        <label for="Materia">Matéria</label>
-                                        <select name="Materia" class="materia">
-
-                                        </select>
-                                    </div>                      
-                                    <i onclick="dMateria(${formRows})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
-                                </div>`;
+                        <div class="formGroup turmaGroup">
+                            <label for="Turma">Turma</label>
+                            <select name="Turma" class="turmasOptions">
+                            </select>
+                        </div>
+                        <div class="formGroup materiaGroup">
+                            <label for="Materia">Matéria</label>
+                            <select name="Materia" class="materia">
+                            </select>
+                        </div>                      
+                        <i onclick="dMateria(${formRows})" id="botaoMenosMateria" style="align-self: center; cursor: pointer;" class="fa-solid fa-circle-minus fa-xl"></i>
+                    </div>`;
     scrollDiv.innerHTML += formRow;
-    formRows++
+    formRows++;
+
+
     let selectTurmas = document.querySelectorAll('.turmasOptions');
     let selectMaterias = document.querySelectorAll('.materia');
     selectTurmas.forEach(turmaSelect => {
@@ -467,6 +586,7 @@ async function aMateria() {
             }
 
         });
+;
     });
     selectMaterias.forEach(materiaSelect => {
         materias.forEach(materia => {
@@ -478,19 +598,16 @@ async function aMateria() {
             }
 
         })
+
     })
     addChangeEvent()
 }
-
-async function dMateria(f) {
-
-    let scrollDiv = document.querySelector('.divReverse');
+function dMateria(f) {
     const formRow = document.querySelector(`.formRow${f}`);
     if (formRow) {
         formRow.remove();
     }
     addChangeEvent()
-
 }
 
 async function fetchCordenadorData() {
@@ -664,24 +781,11 @@ function abrirModalProfessores(event) {
     overlay.style.display = 'block';
     pagAtual = 0
     numeroMateriasTemp = 1
-    carregarPaginaModal(pagAtual, false); // Carrega a primeira página ao abrir o modal
+    carregarPaginaModal(pagAtual); // Carrega a primeira página ao abrir o modal
 }
 
 // Função para fechar o modal
-function fecharModal() {
-    modalProfessores.style.display = 'none';
-    modalRecados.style.display = 'none';
-    overlay.style.display = 'none';
-    pagAtual = 0
 
-    localStorage.setItem('nome', '')
-    localStorage.setItem('sobrenome', '')
-    localStorage.setItem('emailPessoal', '')
-    localStorage.setItem('numero', '')
-    localStorage.setItem('cpf', '')
-    localStorage.setItem('senha', '')
-    localStorage.setItem('emailEducacional', '')
-}
 
 // Função para abrir o modal de recados
 function abrirModalRecados() {
@@ -699,25 +803,25 @@ recados.forEach(recado => {
 // Fecha o modal ao clicar fora dele (no overlay)
 overlay.addEventListener('click', fecharModal);
 
-function voltarPagina(cadastro) {
+function voltarPagina(pc) {
     if (pagAtual == 0) {
         return;
     } else {
         pagAtual--;
     }
-    carregarPaginaModal(pagAtual, cadastro);
+    carregarPaginaModal(pagAtual, pc);
 }
 
-function passarPagina(cadastro) {
+function passarPagina(pc) {
     if (pagAtual == 2) {
         return;
     } else {
         pagAtual++;
     }
-    carregarPaginaModal(pagAtual, cadastro);
+    carregarPaginaModal(pagAtual, pc);
 }
 
-function salvarInfosTemporariamente(form, cadastro) {
+function salvarInfosTemporariamente(form, pc) {
     if (form == 1) {
         let nome = document.getElementById('Nome').value
         let sobrenome = document.getElementById('Sobrenome').value
@@ -725,10 +829,10 @@ function salvarInfosTemporariamente(form, cadastro) {
         let numero = document.getElementById('Numero').value
         let cpf = document.getElementById('CPF').value
 
-        // if(!nome||!sobrenome||!emailPessoal||!numero||!cpf){
-        //     alert('todos os campos precisam ser preenchidos')
-        //     return;
-        // }
+        if(!nome||!sobrenome||!emailPessoal||!numero||!cpf){
+            alert('todos os campos precisam ser preenchidos')
+            return;
+        }
 
         localStorage.setItem('nome', nome)
         localStorage.setItem('sobrenome', sobrenome)
@@ -740,10 +844,10 @@ function salvarInfosTemporariamente(form, cadastro) {
         let confirmarSenha = document.getElementById('ConfirmarSenha').value
         let emailEducacional = document.getElementById('EmailEducacional').value
 
-        // if(!senha||!confirmarSenha||!emailEducacional){
-        //     alert('todos os campos precisam ser preenchidos')
-        //     return;
-        // }
+        if(!senha||!confirmarSenha||!emailEducacional){
+            alert('todos os campos precisam ser preenchidos')
+            return;
+        }
 
         if (senha == confirmarSenha) {
             localStorage.setItem('senha', senha)
@@ -753,9 +857,9 @@ function salvarInfosTemporariamente(form, cadastro) {
             return;
         }
     }
-    passarPagina(cadastro)
+    passarPagina(pc)
 }
-function apagarInfosTemporarias(form, cadastro) {
+function apagarInfosTemporarias(form, pc) {
     if (form === 2) {
         localStorage.setItem('nome', '')
         localStorage.setItem('sobrenome', '')
@@ -766,12 +870,9 @@ function apagarInfosTemporarias(form, cadastro) {
     localStorage.setItem('senha', '')
     localStorage.setItem('emailEducacional', '')
 
-    voltarPagina(cadastro)
+    voltarPagina(pc)
 }
 
-
-let selectTurmas = document.querySelectorAll('.turmasOptions');
-let selectMaterias = document.querySelectorAll('.materia');
 
 async function addChangeEvent() {
     const { data: turmas, error: turmasError } = await supabaseClient
@@ -835,8 +936,6 @@ async function addChangeEvent() {
         });
     })
 }
-
-
 
 fetchProfessoresData()
 fetchCordenadorData()

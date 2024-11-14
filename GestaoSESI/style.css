@@ -344,6 +344,7 @@ i.material-icons {
     z-index: 1000;
     display: none;
 }
+
 .model {
     display: none;
     width: 80%;
@@ -366,7 +367,7 @@ i.material-icons {
     font-size: 16px;
 }
 
-.formulario{
+.formulario {
     width: 600px;
     gap: 15px;
     display: flex;
@@ -377,7 +378,8 @@ i.material-icons {
     scrollbar-width: none;
     justify-content: space-between;
 }
-.scrollAulas{
+
+.scrollAulas {
     width: 600px;
     gap: 15px;
     display: flex;
@@ -388,7 +390,8 @@ i.material-icons {
     scrollbar-width: none;
 
 }
-.scrollAulasSelect{
+
+.scrollAulasSelect {
     width: 600px;
     gap: 15px;
     display: flex;
@@ -398,6 +401,7 @@ i.material-icons {
     overflow-y: auto;
     scrollbar-width: none;
 }
+
 .formRow {
     width: 100%;
     justify-content: space-between;
@@ -416,7 +420,8 @@ i.material-icons {
     width: 70%;
     color: #ffffff;
 }
-.textos{
+
+.textos {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -424,16 +429,19 @@ i.material-icons {
     align-items: center;
     width: 30%;
 }
-.formGroup input{
+
+.formGroup input {
     border-radius: 8px;
     border: #54595E 1px solid;
     padding: 16px;
     width: 100%;
 }
-.formRow{
+
+.formRow {
     gap: 10px;
 }
-.formularioInfos{
+
+.formularioInfos {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -443,38 +451,46 @@ i.material-icons {
     gap: 20px;
     width: 70%;
 }
-.formularioInfos .titulo{
+
+.formularioInfos .titulo {
     font-weight: 600;
 }
-.disabled{
+
+.disabled {
     background-color: #d1d1d1;
 }
-.maisdeum{
+
+.maisdeum {
     display: flex;
     width: 100%;
     justify-content: space-between;
 }
-.formGroup select{
+
+.formGroup select {
     border-radius: 8px;
     padding: 16px;
     font-size: 16px;
 }
-select.materia{
+
+select.materia {
     width: 100%;
 }
-.materiaGroup{
+
+.materiaGroup {
     width: 75%;
 }
-.turmaGroup{
+
+.turmaGroup {
     width: 20%;
 }
+
 /* .soant{
     display: flex;
     justify-content: start;
     width: 100%;
 } */
 
-#modalRecados{
+#modalRecados {
     background-color: #fff;
     flex-direction: column;
     align-items: start;
@@ -484,6 +500,7 @@ select.materia{
 #modalRecados .data{
     font-size: 24px;
 }
+
 /* Sair */
 #salvar {
     display: flex;
@@ -492,19 +509,20 @@ select.materia{
     color: white;
     gap: 12px;
     border-radius: 8px;
-    padding: 10px 25px ;
+    padding: 10px 25px;
 
     cursor: pointer;
-  }
-  
-  #salvar p{
-    font-size: 18px;
-  }
+}
 
-  #iconDoneAll {
+#salvar p {
+    font-size: 1.125rem;
+}
+
+#iconDoneAll {
     margin-right: 8px;
-  }
-.conteudoRecado{
+}
+
+.conteudoRecado {
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -515,17 +533,20 @@ select.materia{
     padding-top: 30px;
 
 }
-.conteudoRecado .title{
-    font-size: 48px;
+
+.conteudoRecado .title {
+    font-size: 3rem;
 }
-.conteudoTexto{
+
+.conteudoTexto {
     display: flex;
     flex-direction: column;
-    align-items:start;
+    align-items: start;
     gap: 27px;
     font-size: 24px;
 }
-.conteudoTexto .addAnexo{
+
+.conteudoTexto .addAnexo {
     opacity: 0.5;
     cursor: pointer;
 }
@@ -535,20 +556,26 @@ select.materia{
         flex-direction: column;
     }
 
-    #centralDiv, #salasDiv, #professoresDiv {
+    #centralDiv,
+    #salasDiv,
+    #professoresDiv {
         width: 100%;
     }
-    .recados{
+
+    .recados {
         align-items: center;
         justify-content: center;
     }
 }
 
-div.professor:hover, .recado:hover, .turma:hover {
+div.professor:hover,
+.recado:hover,
+.turma:hover {
     transform: scale(1.02);
 }
 
-button:focus, input:focus {
+button:focus,
+input:focus {
     outline: 2px solid #A4161A;
     outline-offset: 4px;
 }
@@ -582,15 +609,18 @@ button:focus, input:focus {
 
 /* Ajuste dos elementos internos do modal */
 .formulario {
-    width: 100%; /* Use 100% para ajustar ao modal */
+    width: 100%;
+    /* Use 100% para ajustar ao modal */
     gap: 10px;
     padding: 10px;
 }
 
 .scrollAulas,
 .scrollAulasSelect {
-    width: 100%; /* Ajuste para 100% para responsividade */
-    max-height: 70vh; /* Limite de altura para evitar que ocupe a tela toda */
+    width: 100%;
+    /* Ajuste para 100% para responsividade */
+    max-height: 70vh;
+    /* Limite de altura para evitar que ocupe a tela toda */
 }
 
 .formularioInfos {
@@ -599,7 +629,8 @@ button:focus, input:focus {
 }
 
 .textos .titulo {
-    font-size: 2rem; /* Reduza o tamanho da fonte em telas menores */
+    font-size: 2rem;
+    /* Reduza o tamanho da fonte em telas menores */
 }
 
 /* Altere o layout de colunas para linhas em telas pequenas */
@@ -608,16 +639,55 @@ button:focus, input:focus {
         flex-direction: column;
         align-items: stretch;
     }
+
     .formularioInfos {
         width: 100%;
         padding: 0;
     }
+
     .textos {
         width: 100%;
         text-align: center;
         padding: 10px;
     }
+
     .textos .titulo {
         font-size: 1.5rem;
     }
+}
+
+#exclu {
+    position: absolute;
+    top: 40px;
+    right: 30px;
+    cursor: pointer;
+    transition: opacity 0.3s ease, color 0.3s ease; 
+}
+
+#exclu:hover {
+    color: red;
+}
+
+.noview {
+    display: none;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    /* Ajuste a posição conforme necessário */
+    right: 0px;
+    top: 28px;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.iconDiv:hover .tooltip {
+    display: block;
 }
