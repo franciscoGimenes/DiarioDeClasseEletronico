@@ -34,11 +34,12 @@ function fecharModal() {
     localStorage.setItem('emailEducacional', '')
 }
 async function finalizar(professorCadastro) {
-    if(professorCadastro){
+    if (professorCadastro) {
         const turmasCadastro = Array.from(document.querySelectorAll('.turmasOptions')).map(select => select.value);
         const materiasCadastro = Array.from(document.querySelectorAll('.materia')).map(select => select.value);
 
-        const email_educacional = localStorage.getItem('emailEducacional');
+
+        const email_educacional = localStorage.getItem( 'emailEducacional');
         const senha = localStorage.getItem('senha');
         const emailPessoal = localStorage.getItem('emailPessoal');
         const nome = localStorage.getItem('nome');
@@ -79,7 +80,69 @@ async function finalizar(professorCadastro) {
             console.error('Erro ao realizar cadastro:', error.message);
             alert('Erro ao realizar cadastro: ' + error.message);
         }
-    };
+        fecharModal();
+        location.reload();
+    } else {
+        const turmasCadastro = Array.from(document.querySelectorAll('.turmasOptions')).map(select => select.value);
+        const materiasCadastro = Array.from(document.querySelectorAll('.materia')).map(select => select.value);
+
+        const turmasIDOption = document.querySelectorAll('.formRow')
+
+        let turmasID = []
+
+        turmasIDOption.forEach(turma => {
+            let atrp = turma.getAttribute('data-id')
+            turmasID.push(atrp)
+
+        });
+
+        console.log(turmasID)
+
+        
+
+        const emailPessoal = localStorage.getItem('emailPessoal');
+        const nome = localStorage.getItem('nome');
+        const sobrenome = localStorage.getItem('sobrenome');
+        const numero = localStorage.getItem('numero');
+        const cpf = localStorage.getItem('cpf');
+        const professorClicado = localStorage.getItem('professorClicado');
+        
+        console.log(professorClicado)
+
+        try {
+            const response = await fetch('http://localhost:3000/update_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    professorID: professorClicado,
+                    professorEmailUpd: emailPessoal,
+                    professorNomeUpd: nome,
+                    professorSobrenomeUpd: sobrenome,
+                    professorNumeroUpd: numero,
+                    professorCpfUpd: cpf,
+                    arrayTurmasUpd: turmasCadastro,
+                    arrayMateriasUpd: materiasCadastro,
+                    arrayIds: turmasID
+                }),
+            });
+
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                console.error('Erro ao cadastrar usuário e dados associados:', errorResponse.error);
+                alert('Erro ao cadastrar o professor: ' + errorResponse.error);
+                return;
+            }
+
+            const successMessage = await response.json();
+            console.log(successMessage.message);
+            alert('Usuário e dados associados foram atualizados com sucesso!');
+        } catch (error) {
+            console.error('Erro ao realizar update:', error.message);
+            alert('Erro ao realizar update: ' + error.message);
+        }
+    }
 
     fecharModal();
     location.reload();
@@ -245,10 +308,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
             divFormulario.innerHTML = `
                 <div class="scrollAulas">
                     <div class="divReverse" style="display: flex; flex-direction: column; width: 100%; gap: 15px">
-                        <div class="formRow row2">
-                            <div class="formGroup turmaGroup">
-                            </div>
-                            </div>
+                        
                             </div>
                             <div onclick="aMateria()" class="professor" id="naoCadastradoM">
                                 <i class="fa-solid fa-circle-plus fa-xl"></i>
@@ -317,25 +377,25 @@ async function carregarPaginaModal(atual, professorCadastro) {
             .from('professores')
             .select('*')
             .eq('id', professorClicado)
-    
+
         if (professorError || !professor?.length) {
             console.error('Erro ao buscar dados do professor:', professorError || 'Professor não encontrado');
             return;
         }
-    
+
         const { data: turma_materias, error: tmError } = await supabaseClient
             .from('turmas_materias')
             .select('*')
             .eq('professor_id', professorClicado)
-    
+
         if (tmError || !turma_materias?.length) {
             console.error('Erro ao buscar dados do professor:', tmError || 'Professor não encontrado');
             return;
         }
-    
+
         turma_materias.sort((a, b) => a.turma_id - b.turma_id);
         trashIcon.style = 'display: block;'
-        
+
 
         if (atual == 1) {
             tituloFormulario.innerHTML = 'DADOS DE LOGIN';
@@ -383,7 +443,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                 <div class="formRow">
                     <div class="formGroup">
                         <label for="EmailPessoal">Email Pessoal</label>
-                        <input value="${professor[0].email_educacional}" id="EmailPessoal" placeholder="Escreva aqui" type="email">
+                        <input value="${professor[0].email_pessoal}" id="EmailPessoal" placeholder="Escreva aqui" type="email">
                     </div>
                 </div>
                 <div class="formRow">
@@ -413,10 +473,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
             divFormulario.innerHTML = `
                 <div class="scrollAulas">
                     <div class="divReverse" style="display: flex; flex-direction: column; width: 100%; gap: 15px">
-                        <div class="formRow row2">
-                            <div class="formGroup turmaGroup">
-                            </div>
-                            </div>
+
                             </div>
                             <div onclick="aMateria()" class="professor" id="naoCadastradoM">
                                 <i class="fa-solid fa-circle-plus fa-xl"></i>
@@ -424,7 +481,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                 </div>
                 <div class="botoes maisdeum">
                     <button id="buttonPreview" onclick="apagarInfosTemporarias(3, ${professorCadastro})" type="button">Anterior</button>
-                    <button id="buttonFinish" onclick="fecharModal()" type="button">Finalizar</button>
+                    <button id="buttonFinish" onclick="finalizar(${professorCadastro})" type="button">Finalizar</button>
                 </div>
             `;
 
@@ -455,7 +512,7 @@ async function carregarPaginaModal(atual, professorCadastro) {
                 // console.log(turmaOption)
 
 
-                const formRow = `<div class="formRow row2 formRow${formRows}">
+                const formRow = `<div class="formRow row2 formRow${formRows}" data-id="${turmaOption[0].id}">
                                     <div class="formGroup turmaGroup">
                                         <label for="Turma">Turma</label>
                                         <select name="Turma" class="turmasOptions">
@@ -555,7 +612,7 @@ async function aMateria() {
 
 
     let scrollDiv = document.querySelector('.divReverse');
-    const formRow = `<div class="formRow row2 formRow${formRows}">
+    const formRow = `<div class="formRow row2 formRow${formRows}" data-id="0">
                         <div class="formGroup turmaGroup">
                             <label for="Turma">Turma</label>
                             <select name="Turma" class="turmasOptions">
@@ -586,7 +643,7 @@ async function aMateria() {
             }
 
         });
-;
+        ;
     });
     selectMaterias.forEach(materiaSelect => {
         materias.forEach(materia => {
@@ -829,7 +886,7 @@ function salvarInfosTemporariamente(form, pc) {
         let numero = document.getElementById('Numero').value
         let cpf = document.getElementById('CPF').value
 
-        if(!nome||!sobrenome||!emailPessoal||!numero||!cpf){
+        if (!nome || !sobrenome || !emailPessoal || !numero || !cpf) {
             alert('todos os campos precisam ser preenchidos')
             return;
         }
@@ -844,7 +901,7 @@ function salvarInfosTemporariamente(form, pc) {
         let confirmarSenha = document.getElementById('ConfirmarSenha').value
         let emailEducacional = document.getElementById('EmailEducacional').value
 
-        if(!senha||!confirmarSenha||!emailEducacional){
+        if (!senha || !confirmarSenha || !emailEducacional) {
             alert('todos os campos precisam ser preenchidos')
             return;
         }

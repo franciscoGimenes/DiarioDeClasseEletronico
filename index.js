@@ -17,6 +17,93 @@ app.use(cors());
 // Middleware para parsing de JSON
 app.use(express.json());
 
+app.post('/update_user', async (req, res) => {
+    const { professorEmailUpd, professorCpfUpd, professorNumeroUpd, professorNomeUpd, professorSobrenomeUpd, professorID } = req.body;
+    const { arrayMateriasUpd, arrayTurmasUpd, arrayIds } = req.body;
+
+
+    try {
+
+
+
+
+        // Insere os dados do professor na tabela 'professores'
+        const { data: professorData, error: professorError } = await supabase
+            .from('professores')
+            .update({
+                nome: professorNomeUpd,
+                email_pessoal: professorEmailUpd,
+                cpf: professorCpfUpd,
+                numero_celular: professorNumeroUpd,
+                sobrenome: professorSobrenomeUpd
+            })
+            .eq('id', professorID)
+            .select()
+            .single();
+
+
+        if (professorError) {
+            console.error('Erro ao atualizar o professor:', professorError);
+            return res.status(500).json({ error: 'Erro ao atualizar o professor.' });
+        }
+        
+        const { error: deleteTurmasMateriasError } = await supabase
+            .from('turmas_materias')
+            .delete()
+            .eq('professor_id', professorID);
+
+        if (deleteTurmasMateriasError) {
+            return res.status(500).json({ error: 'Erro ao deletar da tabela turmas_materias' });
+        }
+
+        for (let i = 0; i < arrayMateriasUpd.length; i++) {
+
+            const { data: turma, error: turmaError } = await supabase
+                .from('turmas')
+                .select('id')
+                .eq('nome_turma', arrayTurmasUpd[i])
+                .single();
+                
+                if (turmaError || !turma) {
+                    throw new Error(`Erro ao encontrar turma: ${turmaError?.message || 'Turma não encontrada'}`);
+                }
+                
+                const { data: materia, error: materiaError } = await supabase
+                .from('materias')
+                .select('id')
+                .eq('nome_materia', arrayMateriasUpd[i])
+                .single();
+                
+            if (materiaError || !materia) {
+                throw new Error(`Erro ao encontrar matéria: ${materiaError?.message || 'Matéria não encontrada'}`);
+            }
+
+
+
+            const { error: materiaTurmaDataError } = await supabase
+                .from('turmas_materias')
+                .insert({
+                    turma_id: turma.id,
+                    materia_id: materia.id,
+                    professor_id: professorID
+                });
+
+            if (materiaTurmaDataError) {
+                throw new Error(`Erro ao salvar dados em turmas_materias: ${materiaTurmaDataError.message}`);
+            }
+
+
+        }
+
+
+
+
+        res.status(200).json({ message: 'Usuário e dados associados foram criados com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+})
 
 app.post('/sigin_user', async (req, res) => {
     const { professorEmail, professorSenha, professorCpf, professorEmailPessoal, professorNumero, professorNome, professorSobrenome } = req.body;
@@ -38,7 +125,7 @@ app.post('/sigin_user', async (req, res) => {
         if (userError) {
             throw new Error(`Erro ao criar usuário: ${userError.message}`);
         }
-        
+
         // Insere os dados do professor na tabela 'professores'
         const { data: professorData, error: professorError } = await supabase
             .from('professores')
