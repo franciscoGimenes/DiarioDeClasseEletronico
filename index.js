@@ -17,17 +17,67 @@ app.use(cors());
 // Middleware para parsing de JSON
 app.use(express.json());
 
+app.get('/fetch_roteiro', async (req, res) => {
+    const { data, turma } = req.query;
+    try {
+        const { data: roteiro, error } = await supabase
+            .from('roteiros')
+            .select('*')
+            .eq('data', data)
+            .eq('turma_materia_id', turma)
+            .single();
+        if (error) {
+            return res.status(404).json({ message: 'Roteiro não encontrado' });
+        }
+        res.status(200).json(roteiro);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+
+app.post('/send_roteiro', async (req, res) => {
+    const { roteiro, data, titulo, turma } = req.body;
+    try {
+        // Tenta inserir ou atualizar
+        const { error: DataError } = await supabase
+            .from('roteiros')
+            .upsert(
+                {
+                    turma_materia_id: turma,
+                    data: data,
+                    conteudo: roteiro,
+                    titulo: titulo
+                },
+                { onConflict: ['data', 'turma_materia_id'] } // Define as colunas para conflito
+            );
+
+        if (DataError) {
+            console.error('Erro ao inserir/atualizar no Supabase:', DataError);
+            return res.status(400).json({ error: DataError.message });
+        }
+
+        res.status(200).json({ message: 'Roteiro salvo com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
 app.post('/send_recado', async (req, res) => {
     const { recado, alunoRecadado, professorRecadiante, data } = req.body;
     try {
         const { error: materiaTurmaDataError } = await supabase
-        .from('observacoes')
-        .insert({
-            professor_id: professorRecadiante,
-            aluno_id: alunoRecadado,
-            conteudo: recado,
-            data: data
-        });
+            .from('observacoes')
+            .insert({
+                professor_id: professorRecadiante,
+                aluno_id: alunoRecadado,
+                conteudo: recado,
+                data: data
+            });
 
         res.status(200).json({ message: 'observação feita com sucesso!' });
 

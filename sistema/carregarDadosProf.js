@@ -88,6 +88,7 @@ async function populateTable(turmasMaterias) {
         tbody.appendChild(tr);
         tr.addEventListener('click', ()=>{
             localStorage.setItem('professorTurmaEscolhida', turmaMateria.turma_id)
+            localStorage.setItem('professorTurmaMatEscolhida', turmaMateria.id)
         })
     }
 

@@ -68,11 +68,11 @@ btnSalvar.addEventListener('click', async () => {
 
 
     if (textArea.value == '') {
-        alert('precisa ter recado né cara')
+        alert('é necessario uma observação')
         return
     }
     if (!alunoEscolhido) {
-        alert('precisa ter aluno né cara')
+        alert('é necessaria a seleção de um aluno')
         return
     }
 
