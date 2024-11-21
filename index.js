@@ -17,15 +17,32 @@ app.use(cors());
 // Middleware para parsing de JSON
 app.use(express.json());
 
+app.post('/send_recado', async (req, res) => {
+    const { recado, alunoRecadado, professorRecadiante, data } = req.body;
+    try {
+        const { error: materiaTurmaDataError } = await supabase
+        .from('observacoes')
+        .insert({
+            professor_id: professorRecadiante,
+            aluno_id: alunoRecadado,
+            conteudo: recado,
+            data: data
+        });
+
+        res.status(200).json({ message: 'observação feita com sucesso!' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
 app.post('/update_user', async (req, res) => {
     const { professorEmailUpd, professorCpfUpd, professorNumeroUpd, professorNomeUpd, professorSobrenomeUpd, professorID } = req.body;
     const { arrayMateriasUpd, arrayTurmasUpd, arrayIds } = req.body;
 
 
     try {
-
-
-
 
         // Insere os dados do professor na tabela 'professores'
         const { data: professorData, error: professorError } = await supabase
@@ -46,7 +63,7 @@ app.post('/update_user', async (req, res) => {
             console.error('Erro ao atualizar o professor:', professorError);
             return res.status(500).json({ error: 'Erro ao atualizar o professor.' });
         }
-        
+
         const { error: deleteTurmasMateriasError } = await supabase
             .from('turmas_materias')
             .delete()
@@ -63,17 +80,17 @@ app.post('/update_user', async (req, res) => {
                 .select('id')
                 .eq('nome_turma', arrayTurmasUpd[i])
                 .single();
-                
-                if (turmaError || !turma) {
-                    throw new Error(`Erro ao encontrar turma: ${turmaError?.message || 'Turma não encontrada'}`);
-                }
-                
-                const { data: materia, error: materiaError } = await supabase
+
+            if (turmaError || !turma) {
+                throw new Error(`Erro ao encontrar turma: ${turmaError?.message || 'Turma não encontrada'}`);
+            }
+
+            const { data: materia, error: materiaError } = await supabase
                 .from('materias')
                 .select('id')
                 .eq('nome_materia', arrayMateriasUpd[i])
                 .single();
-                
+
             if (materiaError || !materia) {
                 throw new Error(`Erro ao encontrar matéria: ${materiaError?.message || 'Matéria não encontrada'}`);
             }

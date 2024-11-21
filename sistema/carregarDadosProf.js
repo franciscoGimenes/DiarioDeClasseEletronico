@@ -86,6 +86,9 @@ async function populateTable(turmasMaterias) {
             <td><div class="status-indicator"></div></td>
         `;
         tbody.appendChild(tr);
+        tr.addEventListener('click', ()=>{
+            localStorage.setItem('professorTurmaEscolhida', turmaMateria.turma_id)
+        })
     }
 
     applyDynamicColors();
@@ -140,6 +143,7 @@ function showModal(modal, etapas) {
         button.addEventListener('click', () => {
             localStorage.setItem('etapaSelecionada', i);
             console.log(`Etapa ${i} selecionada e armazenada no localStorage`);
+            window.location.href='./observacoes'
         });
         
         modalContent.appendChild(button);

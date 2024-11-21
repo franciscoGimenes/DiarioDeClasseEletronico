@@ -67,7 +67,7 @@ body {
 .table-container {
     width: 100%;
     overflow-y: auto;
-    max-height: 480px;
+    height: 65vh;
 }
 
 #statsRow {

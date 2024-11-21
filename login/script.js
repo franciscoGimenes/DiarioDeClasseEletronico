@@ -50,7 +50,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
     if (userProfile.tipo_usuario === 'coordenador') {
         window.location.href = './GestaoSESI/index.html';
     } else if (userProfile.tipo_usuario === 'professor') {
-        window.location.href = './sistema/gerMaterias.html';
+        window.location.href = './sistema/index.html';
     } else {
         // Se necessário, você pode adicionar um tratamento adicional aqui
     }

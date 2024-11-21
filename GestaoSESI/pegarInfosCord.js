@@ -777,6 +777,9 @@ async function fetchTurmasData() {
 
         // Cria o elemento da turma
         const turmaDiv = document.createElement('div');
+        turmaDiv.addEventListener('click', ()=>{
+            localStorage.setItem('turmaPick', nomeTurma)
+        })
         turmaDiv.classList.add('turma');
 
         turmaDiv.innerHTML = `
