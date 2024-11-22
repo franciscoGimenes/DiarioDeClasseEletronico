@@ -109,7 +109,8 @@ const subjectColors = {
     'História': '#E15256',
     'Sociologia': '#CC1137',
     'Filosofia': '#AD1880',
-    'Educação Física': '#273283'
+    'Educação Física': '#273283',
+    'Trilha de Produção Textual': '#5b06b6'
 };
 
 // Aplica cores nas células de status com base na matéria

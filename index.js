@@ -17,6 +17,88 @@ app.use(cors());
 // Middleware para parsing de JSON
 app.use(express.json());
 
+app.post('/del_carteira', async (req, res) => {
+    const { cadeira, turma } = req.body;
+
+    try {
+
+        const { error: deleteProfileError } = await supabase
+        .from('salas')
+        .delete()
+        .eq('cadeira_numero', cadeira)
+        .eq('turma', turma);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+})
+
+app.post('/send_alunoCarteira', async (req, res) => {
+    const { cadeira, aluno, turma } = req.body;
+    try {
+        // Tenta inserir ou atualizar
+        // Passo 1: Verificar se há conflito com os critérios
+        const { data: conflictAluno, error: errorAluno } = await supabase
+            .from('salas')
+            .select('*')
+            .eq('aluno_id', aluno)
+            .single();
+
+        const { data: conflictTurmaCadeira, error: errorTurmaCadeira } = await supabase
+            .from('salas')
+            .select('*')
+            .eq('turma', turma)
+            .eq('cadeira_numero', cadeira)
+            .single();
+
+        // Passo 2: Decidir se é um update ou insert
+        if (conflictAluno) {
+            // Atualizar se há conflito com aluno_id
+            const { error } = await supabase
+                .from('salas')
+                .update({
+                    cadeira_numero: cadeira,
+                    turma: turma
+                })
+                .eq('aluno_id', aluno);
+            if (error) console.error('Erro ao atualizar aluno:', error);
+        } else if (conflictTurmaCadeira) {
+            // Atualizar se há conflito com turma E cadeira_numero
+            const { error } = await supabase
+                .from('salas')
+                .update({
+                    aluno_id: aluno
+                })
+                .eq('turma', turma)
+                .eq('cadeira_numero', cadeira);
+            if (error) console.error('Erro ao atualizar turma/cadeira:', error);
+        } else {
+            // Inserir se não há conflito
+            const { error } = await supabase
+                .from('salas')
+                .insert({
+                    cadeira_numero: cadeira,
+                    aluno_id: aluno,
+                    turma: turma
+                });
+            if (error) console.error('Erro ao inserir:', error);
+        }
+
+        if (DataError) {
+            console.error('Erro ao inserir/atualizar no Supabase:', DataError);
+            return res.status(400).json({ error: DataError.message });
+        }
+
+        res.status(200).json({ message: 'Aluno salvo com sucesso' });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+
+
+})
+
 app.get('/fetch_roteiro', async (req, res) => {
     const { data, turma } = req.query;
     try {
