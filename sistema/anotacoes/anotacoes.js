@@ -408,10 +408,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // console.log(anotacoes)
     anotacoes.forEach(anotacao => {
         anotacoesDiv.innerHTML += `            <div  class="anotacaoDiv" data-id="${anotacao.id}">
+
+                <div class="textos">
                 <h4 class="titulo">${anotacao.titulo}</h4>
                 <p class="texto">
                 ${anotacao.conteudo}
                 </p>
+                </div>    
                 <div class="botoes">
                     <div class="iconDiv">
                         <i class="fa-solid fa-trash fa-xl"></i>
@@ -472,10 +475,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const successMessage = await response.json();
                 console.log(successMessage.message);
-                alert('Anotação excluída com sucesso!');
+                // alert('Anotação excluída com sucesso!');
             } catch (error) {
                 console.error('Erro ao realizar exclusão:', error.message);
-                alert('Erro ao realizar exclusão: ' + error.message);
+                // alert('Erro ao realizar exclusão: ' + error.message);
             }
 
             location.reload()

@@ -837,13 +837,14 @@ body {
 
 .anotacaoDiv{
     background-color: #D9D9D9;
-    border-radius: 8px;
-    width: 20%;
-    height: 250px;
+    /* border-radius: 4px; */
+    width: 230px;
+    height: 300px;
     padding: 16px 16px 20px 16px ;
     display: flex;
     flex-direction: column;
-    gap: 11px;
+    justify-content: space-between;
+    /* border: 1px solid black; */
 }
 .anotacaoDiv p {
     width: 100%;
@@ -870,9 +871,11 @@ body {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 110px;
-    max-width: 800px; /* Define um limite para centralizar */
+    gap: 6vw;
+    width: auto;
+    min-width: 62vw;/* Define um limite para centralizar */
     padding-bottom: 20px;
+    
 }
 
 .fa-trash, .fa-eye, .fa-x{
@@ -893,7 +896,7 @@ body {
     display: none;
     position: absolute;
     /* Ajuste a posição conforme necessário */
-    left: 80px;
+    left: 65px;
     top: 0px;
     transform: translateX(-50%);
     background-color: #333;
@@ -945,7 +948,7 @@ body {
 
 .textarea {
     width: 95%;
-    height: 150px;
+    height: 250px;
     border: none;
     border-bottom: 1px solid #ccc;
     font-family: 'Poppins', sans-serif;
@@ -957,4 +960,10 @@ body {
 
 #textareaTopico2 {
     margin-top: 4%;
+}
+.textos{
+  display: flex;
+  flex-direction: column;
+  max-height: 90%;
+  gap: 15px;
 }
