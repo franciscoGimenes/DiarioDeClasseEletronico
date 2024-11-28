@@ -62,11 +62,6 @@
                 <h1 class="titleBoxIcon">Observações</h1>
             </div>
 
-            <div onclick="window.location.href='../expectativasAprendizagem/'" id="boxIcon">
-                <img class="imgIcon" src="../icon/icon04.png" alt="">
-                <h1 class="titleBoxIcon">Expec. de Aprend.</h1>
-            </div>
-
             <div onclick="window.location.href='../roteiroVirtual/'" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon05.png" alt="">
                 <h1 class="titleBoxIcon">Roteiro Virtual</h1>
@@ -272,6 +267,22 @@
         //         progress.innerHTML = 'Erro ao aplicar OCR.';
         //     });
         // };
+
+        document.getElementById("inputPesquisa").addEventListener("input", function () {
+    const searchTerm = this.value.toLowerCase(); // Texto pesquisado em minúsculas
+    const boxes = document.querySelectorAll("#aside_BoxIcon #boxIcon"); // Seleciona todas as divs boxIcon
+
+    boxes.forEach(box => {
+        const title = box.querySelector(".titleBoxIcon").textContent.toLowerCase(); // Texto do título em minúsculas
+        // Mostra ou esconde o box dependendo se o título contém o texto pesquisado
+        if (title.includes(searchTerm)) {
+            box.style.display = "flex"; // Mostra o box (ou use 'block' conforme o design)
+        } else {
+            box.style.display = "none"; // Esconde o box
+        }
+    });
+});
+
     </script>
     <script src="anotacoes.js"></script>
 </body>

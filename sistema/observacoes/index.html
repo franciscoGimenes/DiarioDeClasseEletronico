@@ -13,7 +13,7 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 </head>
 
@@ -47,10 +47,7 @@
                 <h1 class="titleBoxIcon">Observações</h1>
             </div>
 
-            <div onclick="window.location.href='../expectativasAprendizagem/'" id="boxIcon">
-                <img class="imgIcon" src="../icon/icon04.png" alt="">
-                <h1 class="titleBoxIcon">Expec. de Aprend.</h1>
-            </div>
+
 
             <div onclick="window.location.href='../roteiroVirtual/'" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon05.png" alt="">
@@ -122,6 +119,23 @@
 
     <script src="Observacoes.js"></script>
     <script src="script.js"></script>
+    <script>
+        document.getElementById("inputPesquisa").addEventListener("input", function () {
+            const searchTerm = this.value.toLowerCase(); // Texto pesquisado em minúsculas
+            const boxes = document.querySelectorAll("#aside_BoxIcon #boxIcon"); // Seleciona todas as divs boxIcon
+
+            boxes.forEach(box => {
+                const title = box.querySelector(".titleBoxIcon").textContent.toLowerCase(); // Texto do título em minúsculas
+                // Mostra ou esconde o box dependendo se o título contém o texto pesquisado
+                if (title.includes(searchTerm)) {
+                    box.style.display = "flex"; // Mostra o box (ou use 'block' conforme o design)
+                } else {
+                    box.style.display = "none"; // Esconde o box
+                }
+            });
+        });
+
+    </script>
 </body>
 
-</html> 
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ptbr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +10,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-	<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 </head>
+
 <body>
     <aside id="asideSesi">
 
@@ -41,10 +43,6 @@
                 <h1 class="titleBoxIcon">Observações</h1>
             </div>
 
-            <div onclick="window.location.href='../expectativasAprendizagem/'" id="boxIcon">
-                <img class="imgIcon" src="../icon/icon04.png" alt="">
-                <h1 class="titleBoxIcon">Expec. de Aprend.</h1>
-            </div>
 
             <div onclick="window.location.href='../roteiroVirtual/'" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon05.png" alt="">
@@ -52,7 +50,7 @@
             </div>
 
             <div style="    background-color: #b1b1b1;
-"   id="boxIcon">
+" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon06.png" alt="">
                 <h1 class="titleBoxIcon">Lanç. de Notas</h1>
             </div>
@@ -97,7 +95,7 @@
 
         <div id="areaNotas">
 
-            </div>
+        </div>
 
 
         </div>
@@ -106,8 +104,26 @@
             <h2>Salvar</h2>
         </div>
     </main>
-    
+
     <script src="lancamentoNotas.js"></script>
     <script src="script.js"></script>
+    <script>
+        document.getElementById("inputPesquisa").addEventListener("input", function () {
+            const searchTerm = this.value.toLowerCase(); // Texto pesquisado em minúsculas
+            const boxes = document.querySelectorAll("#aside_BoxIcon #boxIcon"); // Seleciona todas as divs boxIcon
+
+            boxes.forEach(box => {
+                const title = box.querySelector(".titleBoxIcon").textContent.toLowerCase(); // Texto do título em minúsculas
+                // Mostra ou esconde o box dependendo se o título contém o texto pesquisado
+                if (title.includes(searchTerm)) {
+                    box.style.display = "flex"; // Mostra o box (ou use 'block' conforme o design)
+                } else {
+                    box.style.display = "none"; // Esconde o box
+                }
+            });
+        });
+
+    </script>
 </body>
+
 </html>

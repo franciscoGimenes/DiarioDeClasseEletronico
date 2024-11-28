@@ -19,6 +19,7 @@ body {
     flex-direction: column;
     align-items: center;
     border-right: 1px black solid;
+    height: 100vh;
 }
   
   #logoSesi {
@@ -223,6 +224,7 @@ body {
     max-height: 430px;
     overflow-y: auto;
     padding: 8px;
+
   }
   
   #areaNotas::-webkit-scrollbar{
@@ -242,6 +244,7 @@ body {
   }
   .alunoNota h3, .nomeh3{
     width: 150px;
+    font-weight: 400;
   }
   
   .notas{

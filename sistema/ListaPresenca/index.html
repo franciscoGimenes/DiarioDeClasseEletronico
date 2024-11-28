@@ -13,7 +13,7 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 </head>
 
@@ -32,7 +32,7 @@
         <div id="aside_BoxIcon">
 
             <div style="    background-color: #b1b1b1;
-"  id="boxIcon">
+" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon01.png" alt="">
                 <h1 class="titleBoxIcon">Presença</h1>
             </div>
@@ -42,15 +42,12 @@
                 <h1 class="titleBoxIcon">Anotações</h1>
             </div>
 
-            <div onclick="window.location.href='../observacoes/'"  id="boxIcon">
+            <div onclick="window.location.href='../observacoes/'" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon03.png" alt="">
                 <h1 class="titleBoxIcon">Observações</h1>
             </div>
 
-            <div onclick="window.location.href='../expectativasAprendizagem/'" id="boxIcon">
-                <img class="imgIcon" src="../icon/icon04.png" alt="">
-                <h1 class="titleBoxIcon">Expec. de Aprend.</h1>
-            </div>
+
 
             <div onclick="window.location.href='../roteiroVirtual/'" id="boxIcon">
                 <img class="imgIcon" src="../icon/icon05.png" alt="">
@@ -87,42 +84,46 @@
     </aside>
 
 
-        <!--menu do mobile -->
-        <header id="cabecalhoMobile">
-            <div class="flexDiv">
-                <div id="areaLogoMobile">
-                    <img class="logoMobile" src="../img/sesiLogo.png" alt="Logo sesi">
-                </div>
-                <div id="areaDataMobile">
-                    <p id="dataMobile">data</p>
-                </div>
-                <div id="areaIconeMobile">
-                    <svg id="iconeMobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
-                        <path d="M16 132h416c8.8 0 16-7.2 16-16V92c0-8.8-7.2-16-16-16H16c-8.8 0-16 7.2-16 16v24c0 8.8 7.2 16 16 16zm416 128H16c-8.8 0-16 7.2-16 16v24c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-24c0-8.8-7.2-16-16-16zm0 160H16c-8.8 0-16 7.2-16 16v24c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-24c0-8.8-7.2-16-16-16z"/>
-                      </svg>                  
-                </div>
+    <!--menu do mobile -->
+    <header id="cabecalhoMobile">
+        <div class="flexDiv">
+            <div id="areaLogoMobile">
+                <img class="logoMobile" src="../img/sesiLogo.png" alt="Logo sesi">
             </div>
-    
-            <div id="boxIconMobile">
-                <div onclick="window.location.href='../ListaPresenca/listaPresenca.html'" id="botoesMobile"><img class="imgIconMobile" src="icon/Vector (1).png" alt="">
-                    <h1 class="tituloIconeMobile">Lista de Presença</h1>
-                </div>
-    
-                <div onclick="window.location.href='../anotacoes/anotacoes.html'" id="botoesMobile"><img class="imgIconMobile" src="icon/Vector (2).png" alt="">
-                    <h1 class="tituloIconeMobile">Anotações</h1>
-                </div>
-    
-                <div onclick="window.location.href='../expectativasAprendizagem/expectativasAprendizagem.html'" id="botoesMobile"><img class="imgIconMobile" src="icon/Vector (3).png" alt="">
-                    <h1 class="tituloIconeMobile">Expec. de Aprend.</h1>
-                </div>
-    
+            <div id="areaDataMobile">
+                <p id="dataMobile">data</p>
             </div>
-        </header>
-        <!-- Fim do menu do mobile -->
+            <div id="areaIconeMobile">
+                <svg id="iconeMobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
+                    <path
+                        d="M16 132h416c8.8 0 16-7.2 16-16V92c0-8.8-7.2-16-16-16H16c-8.8 0-16 7.2-16 16v24c0 8.8 7.2 16 16 16zm416 128H16c-8.8 0-16 7.2-16 16v24c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-24c0-8.8-7.2-16-16-16zm0 160H16c-8.8 0-16 7.2-16 16v24c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-24c0-8.8-7.2-16-16-16z" />
+                </svg>
+            </div>
+        </div>
+
+        <div id="boxIconMobile">
+            <div onclick="window.location.href='../ListaPresenca/listaPresenca.html'" id="botoesMobile"><img
+                    class="imgIconMobile" src="icon/Vector (1).png" alt="">
+                <h1 class="tituloIconeMobile">Lista de Presença</h1>
+            </div>
+
+            <div onclick="window.location.href='../anotacoes/anotacoes.html'" id="botoesMobile"><img
+                    class="imgIconMobile" src="icon/Vector (2).png" alt="">
+                <h1 class="tituloIconeMobile">Anotações</h1>
+            </div>
+
+            <div onclick="window.location.href='../expectativasAprendizagem/expectativasAprendizagem.html'"
+                id="botoesMobile"><img class="imgIconMobile" src="icon/Vector (3).png" alt="">
+                <h1 class="tituloIconeMobile">Expec. de Aprend.</h1>
+            </div>
+
+        </div>
+    </header>
+    <!-- Fim do menu do mobile -->
 
     <main id="Conteudo">
 
-    
+
 
         <h1 id="title">Lista de Presença</h1>
 
@@ -152,7 +153,7 @@
                     </thead>
 
                     <tbody id="tbody">
-                
+
                         <tr>
                             <td>
                                 <label class="switch">
@@ -198,7 +199,7 @@
                 <span class="material-symbols-outlined">check</span>
                 <h1>Salvar</h1>
             </button>
-        
+
             <button id="btnSelectionAll" class="switchAll">
                 <input type="checkbox" id="selectAllCheckbox">
                 <span class="slider"></span>
@@ -209,6 +210,23 @@
 
     <script src="script.js"></script>
     <script src="listaPresenca.js"></script>
+    <script>
+        document.getElementById("inputPesquisa").addEventListener("input", function () {
+            const searchTerm = this.value.toLowerCase(); // Texto pesquisado em minúsculas
+            const boxes = document.querySelectorAll("#aside_BoxIcon #boxIcon"); // Seleciona todas as divs boxIcon
+
+            boxes.forEach(box => {
+                const title = box.querySelector(".titleBoxIcon").textContent.toLowerCase(); // Texto do título em minúsculas
+                // Mostra ou esconde o box dependendo se o título contém o texto pesquisado
+                if (title.includes(searchTerm)) {
+                    box.style.display = "flex"; // Mostra o box (ou use 'block' conforme o design)
+                } else {
+                    box.style.display = "none"; // Esconde o box
+                }
+            });
+        });
+
+    </script>
 </body>
 
 </html>
