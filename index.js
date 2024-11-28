@@ -17,16 +17,201 @@ app.use(cors());
 // Middleware para parsing de JSON
 app.use(express.json());
 
+app.post('/del_anotacoes', async (req, res) => {
+    const { id } = req.body;
+
+    try {
+
+        const { error: deleteProfileError } = await supabase
+            .from('anotacoes_pessoais')
+            .delete()
+            .eq('id', id);
+
+        if (deleteProfileError) {
+            return res.status(500).json({ error: 'Erro ao deletar anotacao' });
+        }
+        res.status(200).json({ message: 'anotação foi excluída com sucesso!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao excluir notação: ' + error.message });
+    }
+
+})
+
+app.post('/update_anotacoes', async (req, res) => {
+    const { conteudo, data, titulo, turma_materia_id, id } = req.body;
+    try {
+        // 
+        const { error: DataError } = await supabase
+            .from('anotacoes_pessoais')
+            .update({
+                conteudo: conteudo,
+                data: data,
+                titulo: titulo,
+                turma_materia_id: turma_materia_id
+            })
+            .eq('id', id);
+
+        if (DataError) {
+            console.error('Erro ao inserir/atualizar no Supabase:', DataError);
+            return res.status(400).json({ error: DataError.message });
+        }
+
+        res.status(200).json({ message: 'anotação salva com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+})
+
+app.post('/mandar_anotacoes', async (req, res) => {
+    const { conteudo, data, titulo, turma_materia_id } = req.body;
+    try {
+        // 
+        const { error: DataError } = await supabase
+            .from('anotacoes_pessoais')
+            .insert({
+                conteudo: conteudo,
+                data: data,
+                titulo: titulo,
+                turma_materia_id: turma_materia_id
+            });
+
+        if (DataError) {
+            console.error('Erro ao inserir/atualizar no Supabase:', DataError);
+            return res.status(400).json({ error: DataError.message });
+        }
+
+        res.status(200).json({ message: 'anotação salva com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    }
+})
+
+app.post('/mandar_faltas', async (req, res) => {
+    const { aluno_id, etapa_id, falta } = req.body;
+
+    const { data: conflictAluno, error: errorAluno } = await supabase
+        .from('faltas')
+        .select('*')
+        .eq('aluno_id', aluno_id)
+        .eq('etapa_id', etapa_id)
+        .single();
+
+    if (!conflictAluno) {
+
+        console.log('oi')
+        // Não existe conflito, insere um novo registro
+        if (falta == true) {
+            const { error } = await supabase
+                .from('faltas')
+                .insert({
+                    aluno_id: aluno_id,
+                    etapa_id: etapa_id,
+                    faltas: 0,
+                    dias_presentes: 1
+                });
+
+            if (error) {
+                return res.status(400).json({ error: 'Erro ao inserir falta.', error });
+            }
+        } else {
+            const { error } = await supabase
+                .from('faltas')
+                .insert({
+                    aluno_id: aluno_id,
+                    etapa_id: etapa_id,
+                    faltas: 1,
+                    dias_presentes: 0,
+                });
+
+            if (error) {
+                return res.status(400).json({ error: 'Erro ao inserir falta.', error });
+            }
+        }
+
+        return res.status(201).json({ message: 'Falta inserida com sucesso.' });
+    } else {
+        // Existe conflito, faz o update
+        if (falta == true) {
+            // Incrementa dias_presentes
+            const { error } = await supabase
+                .from('faltas')
+                .update({ dias_presentes: conflictAluno.dias_presentes + 1 })
+                .eq('aluno_id', aluno_id)
+                .eq('etapa_id', etapa_id);
+
+            if (error) {
+                return res.status(400).json({ error: 'Erro ao atualizar dias presentes.' });
+            }
+        } else {
+            // Incrementa faltas
+            const { error } = await supabase
+                .from('faltas')
+                .update({ faltas: conflictAluno.faltas + 1 })
+                .eq('aluno_id', aluno_id)
+                .eq('etapa_id', etapa_id);
+
+            if (error) {
+                return res.status(400).json({ error: 'Erro ao atualizar faltas.' });
+            }
+        }
+
+        return res.status(200).json({ message: 'Falta atualizada com sucesso.' });
+    }
+});
+
+app.post('/mandar_notas', async (req, res) => {
+    const { aluno_id, turma_materia_id, etapa_id, nota1, nota2, nota3, media } = req.body;
+
+    // console.log('Dados recebidos:', req.body); // Logando os dados recebidos para verificar o que está sendo enviado
+
+    // Validar se todos os campos necessários estão presentes
+    if (!aluno_id || !turma_materia_id || !etapa_id) {
+        return res.status(400).json({ error: 'aluno_id, turma_materia_id e etapa_id são obrigatórios.' });
+    }
+
+    try {
+        // Realizar o upsert
+        const { data, error } = await supabase
+            .from('notas') // Substitua pelo nome da sua tabela
+            .upsert(
+                {
+                    aluno_id: aluno_id,
+                    turma_materia_id: turma_materia_id,
+                    etapa_id: etapa_id,
+                    nota1: nota1,
+                    nota2: nota2,
+                    nota3: nota3,
+                    media: media
+                },
+                { onConflict: ['aluno_id', 'turma_materia_id', 'etapa_id'] } // Configura conflito nas colunas específicas
+            );
+
+        if (error) {
+            console.error('Erro ao fazer upsert:', error); // Logando o erro completo
+            throw error;
+        }
+
+        // Retornar sucesso
+        res.status(200).json({ message: 'Notas enviadas com sucesso!', data });
+    } catch (err) {
+        // Tratamento de erro
+        console.error('Erro inesperado:', err); // Logando erro inesperado
+        res.status(500).json({ error: 'Erro ao enviar as notas.', details: err.message });
+    }
+});
+
 app.post('/del_carteira', async (req, res) => {
     const { cadeira, turma } = req.body;
 
     try {
 
         const { error: deleteProfileError } = await supabase
-        .from('salas')
-        .delete()
-        .eq('cadeira_numero', cadeira)
-        .eq('turma', turma);
+            .from('salas')
+            .delete()
+            .eq('cadeira_numero', cadeira)
+            .eq('turma', turma);
 
     } catch (error) {
         console.error(error);
@@ -118,8 +303,6 @@ app.get('/fetch_roteiro', async (req, res) => {
     }
 });
 
-
-
 app.post('/send_roteiro', async (req, res) => {
     const { roteiro, data, titulo, turma } = req.body;
     try {
@@ -147,7 +330,6 @@ app.post('/send_roteiro', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-
 
 app.post('/send_recado', async (req, res) => {
     const { recado, alunoRecadado, professorRecadiante, data } = req.body;
