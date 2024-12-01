@@ -97,6 +97,13 @@ async function populateTable(turmasMaterias) {
             <td><div class="status-indicator"></div></td>
         `;
         tbody.appendChild(tr);
+        tr.addEventListener('click', ()=>{
+            localStorage.setItem('professorTurmaEscolhida', turmaMateria.turma_id)
+            localStorage.setItem('professorTurmaMatEscolhida', turmaMateria.id)
+            localStorage.setItem('professorTurmaMatProfEscolhido', turmaMateria.professor_id)
+
+            console.log(turmaMateria.turma_id,turmaMateria.id,turmaMateria.professor_id)
+        })
     }
 
     applyDynamicColors();
@@ -151,6 +158,7 @@ function showModal(modal, etapas) {
         button.addEventListener('click', () => {
             localStorage.setItem('etapaSelecionada', i);
             console.log(`Etapa ${i} selecionada e armazenada no localStorage`);
+            window.location.href='./Mapeamento'
         });
         
         modalContent.appendChild(button);
@@ -323,24 +331,24 @@ window.addEventListener('load', () => {
 });
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const asideMapeamento = document.getElementById("mapeamento");
-    const body = document.body; // Obtém o elemento body
+// document.addEventListener("DOMContentLoaded", function () {
+//     const asideMapeamento = document.getElementById("mapeamento");
+//     const body = document.body; // Obtém o elemento body
 
-    // Verifica se o elemento existe
-    if (asideMapeamento) {
-        asideMapeamento.addEventListener("click", function () {
-            // Adiciona ou remove a classe "expanded" para expandir ou recolher
-            asideMapeamento.classList.toggle("expanded");
-            body.classList.toggle("expanded"); // Adiciona ou remove a classe no body
+//     // Verifica se o elemento existe
+//     if (asideMapeamento) {
+//         asideMapeamento.addEventListener("click", function () {
+//             // Adiciona ou remove a classe "expanded" para expandir ou recolher
+//             asideMapeamento.classList.toggle("expanded");
+//             body.classList.toggle("expanded"); // Adiciona ou remove a classe no body
 
-            // Redireciona para a página de mapeamento após um tempo
-            setTimeout(() => {
-                window.location.href = "./Mapeamento/mapeamento.html"; // Altere para o caminho correto
-            }, 800); // Aguarde um tempo antes de redirecionar, se desejar
-        });
-    } else {
-        console.error("Elemento com ID 'mapeamento' não encontrado.");
-    }
-});
+//             // Redireciona para a página de mapeamento após um tempo
+//             setTimeout(() => {
+//                 window.location.href = "./Mapeamento/mapeamento.html"; // Altere para o caminho correto
+//             }, 800); // Aguarde um tempo antes de redirecionar, se desejar
+//         });
+//     } else {
+//         console.error("Elemento com ID 'mapeamento' não encontrado.");
+//     }
+// });
 

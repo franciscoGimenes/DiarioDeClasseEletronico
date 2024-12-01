@@ -270,10 +270,7 @@ app.post('/send_alunoCarteira', async (req, res) => {
             if (error) console.error('Erro ao inserir:', error);
         }
 
-        if (DataError) {
-            console.error('Erro ao inserir/atualizar no Supabase:', DataError);
-            return res.status(400).json({ error: DataError.message });
-        }
+
 
         res.status(200).json({ message: 'Aluno salvo com sucesso' });
     } catch (error) {

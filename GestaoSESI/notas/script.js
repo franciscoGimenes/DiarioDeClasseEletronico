@@ -277,76 +277,67 @@ document.getElementById('sair').addEventListener('click', async () => {
 document.addEventListener('DOMContentLoaded', async () => {
     const botaoDropdown = document.getElementById('dropdownButton')
     const dropdown = document.getElementById('dropdown')
-
-    const userId = localStorage.getItem('authUuid');
-
-    // Busca o ID do professor relacionado ao perfil do usuário
-    const { data: profileID, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('professor_id')
-        .eq('id', userId);
-
-    if (profileError || !profileID?.length) {
-        console.error('Erro ao buscar perfil:', profileError || 'Nenhum perfil encontrado');
-        return;
-    }
-
-    const professorId = profileID[0].professor_id;
-
-    // Busca os dados do professor usando o ID encontrado
-    const { data: professor, error: professorError } = await supabaseClient
-        .from('professores')
-        .select('*')
-        .eq('id', professorId);
-
-    if (professorError || !professor?.length) {
-        console.error('Erro ao buscar dados do professor:', professorError || 'Professor não encontrado');
-        return;
-    }
-
+  
+    const turmaId = localStorage.getItem('professorTurmaEscolhida');
+    // const professorId = localStorage.getItem('professorTurmaMatProfEscolhido');
+  
+    // // Busca o ID do professor relacionado ao perfil do usuário
+  
+  
+    // // Busca os dados do professor usando o ID encontrado
+    // const { data: professor, error: professorError } = await supabaseClient
+    //     .from('professores')
+    //     .select('*')
+    //     .eq('id', professorId);
+  
+    // if (professorError || !professor?.length) {
+    //     console.error('Erro ao buscar dados do professor:', professorError || 'Professor não encontrado');
+    //     return;
+    // }
+  
     // const spanProfessor = document.getElementById('nomeProfessor');
     // spanProfessor.textContent = `Prof. ${professor[0].nome}`;
-
+  
     // Busca turmas e matérias associadas ao professor
     const { data: turmasMaterias, error: turmasError } = await supabaseClient
         .from('turmas_materias')
         .select('*')
-        .eq('professor_id', professorId);
-
+        .eq('turma_id', turmaId);
+  
     if (turmasError) {
         console.error('Erro ao buscar turmas:', turmasError.message);
         return;
     }
-
+  
     const turmaID = localStorage.getItem('professorTurmaMatEscolhida')
-
+  
     const { data: turmaMateria, error: turmaError } = await supabaseClient
         .from('turmas_materias')
         .select('*')
         .eq('id', turmaID)
         .single();
-
+  
     // console.log(turmaID, turmasMaterias)
     const { data: turma, error: turmaTError } = await supabaseClient
         .from('turmas')
         .select('*')
         .eq('id', turmaMateria.turma_id)
         .single();
-
+  
     const { data: materia, error: matError } = await supabaseClient
         .from('materias')
         .select('*')
         .eq('id', turmaMateria.materia_id)
         .single();
-
+  
     const nomeTurma = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
         ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
         : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
-
+  
     const nomeMateria = materia.nome_materia == 'Mundo do Trabalho e Empreendedorismo' ? `M.T.E` : `${materia.nome_materia}`
-
+  
     botaoDropdown.innerHTML = `${nomeTurma} - ${nomeMateria} <span class="arrow">&#x25BC;</span>`
-
+  
     for (const TM of turmasMaterias) {
         if (TM.id != turmaID) {
             const { data: turmaMateria, error: turmaError } = await supabaseClient
@@ -354,39 +345,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .select('*')
                 .eq('id', TM.id)
                 .single();
-
+  
             // console.log(turmaID, turmasMaterias)
             const { data: turma, error: turmaTError } = await supabaseClient
                 .from('turmas')
                 .select('*')
                 .eq('id', turmaMateria.turma_id)
                 .single();
-
+  
             const { data: materia, error: matError } = await supabaseClient
                 .from('materias')
                 .select('*')
                 .eq('id', turmaMateria.materia_id)
                 .single();
-
+  
             const nomeTurma = turma.nome_turma[0] == 1 || turma.nome_turma[0] == 2 || turma.nome_turma[0] == 3
                 ? `${turma.nome_turma[0]}°${turma.nome_turma[1]} EM`
                 : `${turma.nome_turma[0]}°${turma.nome_turma[1]}`;
-
+  
             const nomeMateria = materia.nome_materia == 'Mundo do Trabalho e Empreendedorismo' ? `M.T.E` : `${materia.nome_materia}`
             const liTurma = document.createElement('li')
-
+  
             liTurma.textContent = `${nomeTurma} - ${nomeMateria}`
             dropdown.appendChild(liTurma)
-
-
+  
+            
             liTurma.addEventListener('click', () => {
                 localStorage.setItem('professorTurmaEscolhida', turmaMateria.turma_id)
                 localStorage.setItem('professorTurmaMatEscolhida', TM.id)
-
+                localStorage.setItem('professorTurmaMatProfEscolhido', turmaMateria.professor_id)
+  
                 location.reload()
             })
         }
     }
-})
+  })
 
 populationTable()

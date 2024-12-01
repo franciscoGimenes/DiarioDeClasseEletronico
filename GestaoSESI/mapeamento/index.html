@@ -37,39 +37,36 @@
 
         <div id="aside_BoxIcon">
 
-            <div onclick="window.location.href='../ListaPresenca/listaPresenca.html'" id="boxIcon">
-                <img class="imgIcon" src="icon/icon01.png" alt="">
+            <div onclick="window.location.href='../ListaPresenca/'" id="boxIcon">
+                <img class="imgIcon" src="../icon/icon01.png" alt="">
                 <h1 class="titleBoxIcon">Presença</h1>
             </div>
 
-            <div onclick="window.location.href='../anotacoes/anotacoes.html'" id="boxIcon">
-                <img class="imgIcon" src="icon/icon02.png" alt="">
+            <div onclick="window.location.href='../anotacoes/'" id="boxIcon">
+                <img class="imgIcon" src="../icon/icon02.png" alt="">
                 <h1 class="titleBoxIcon">Anotações</h1>
             </div>
 
-            <div onclick="window.location.href='../Observacoes/Observacoes.html'" id="boxIcon">
-                <img class="imgIcon" src="icon/icon03.png" alt="">
+            <div onclick="window.location.href='../observacoes'" id="boxIcon">
+                <img class="imgIcon" src="../icon/icon03.png" alt="">
                 <h1 class="titleBoxIcon">Observações</h1>
             </div>
 
-            <div onclick="window.location.href='../expectativasAprendizagem/expectativasAprendizagem.html'"
-                id="boxIcon">
-                <img class="imgIcon" src="icon/icon04.png" alt="">
-                <h1 class="titleBoxIcon">Expec. de Aprend.</h1>
-            </div>
 
-            <div onclick="window.location.href='../RoteiroVirtual/RoteiroVirtual.html'" id="boxIcon">
-                <img class="imgIcon" src="icon/icon05.png" alt="">
+
+            <div onclick="window.location.href='../roteiroVirtual/'" id="boxIcon">
+                <img class="imgIcon" src="../icon/icon05.png" alt="">
                 <h1 class="titleBoxIcon">Roteiro Virtual</h1>
             </div>
 
-            <div onclick="window.location.href='../LancamentoNotas/lancamentoNotas.html'" id="boxIcon">
-                <img class="imgIcon" src="icon/icon06.png" alt="">
+            <div onclick="window.location.href='../notas/'" id="boxIcon">
+                <img class="imgIcon" src="../icon/icon06.png" alt="">
                 <h1 class="titleBoxIcon">Lanç. de Notas</h1>
             </div>
 
-            <div id="boxIcon">
-                <img class="imgIcon" src="icon/icon07.png" alt="">
+            <div style="    background-color: #b1b1b1;
+" id="boxIcon">
+                <img class="imgIcon" src="../icon/icon07.png" alt="">
                 <h1 class="titleBoxIcon">Mapeamento</h1>
             </div>
         </div>
@@ -77,15 +74,11 @@
 
         <div class="input-container">
             <button class="custom-input" id="dropdownButton" onclick="toggleDropdown()">
-                3ºB E.M - Língua Portuguesa
-                <span class="arrow">&#x25BC;</span>
+
             </button>
 
             <ul class="dropdown" id="dropdown">
-                <li>3ºB E.M - Língua Portuguesa</li>
-                <li>3ºA E.M - Língua Portuguesa</li>
-                <li>2ºB E.M - Língua Portuguesa</li>
-                <li>2ºA E.M - Língua Portuguesa</li>
+
             </ul>
         </div>
 
@@ -102,6 +95,14 @@
             <i class="fa-solid fa-door-open"></i>
         </div>
 
+        <!-- <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; background-color: black; color: white; padding: 0 20px;">
+            <p>Carregando...</p>
+        </div> -->
+
+        <div id="loading" class="spinner">
+            <div class="spinnerin"></div>
+        </div>
+        
 
         <div class="cadeiras">
             <div class="fileira">

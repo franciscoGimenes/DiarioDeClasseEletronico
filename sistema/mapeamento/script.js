@@ -2,6 +2,17 @@ const supabaseUrl = 'https://pfdjgsjbmhisqjxbzmjn.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZGpnc2pibWhpc3FqeGJ6bWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkxNjY3NzEsImV4cCI6MjA0NDc0Mjc3MX0.qYuDBWNU8F6qzcAaksDeXc_CITjHAMAagFgFq-miLfE';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+function mostrarLoading() {
+    const loading = document.getElementById('loading');
+    loading.style.display = 'block';
+}
+
+function esconderLoading() {
+    const loading = document.getElementById('loading');
+    loading.style.display = 'none';
+}
+
+
 function abreviarNome(nomeCompleto) {
     // Divide o nome completo em partes
     const partes = nomeCompleto.split(" ");
@@ -149,95 +160,105 @@ document.addEventListener('DOMContentLoaded', verificarAutenticacao);
 // });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // console.log('oi')
-    const cadeiras = document.querySelectorAll('.cadeira');
 
-    let turmaEscolha = localStorage.getItem('turmaPick')
+    try {
+        const cadeiras = document.querySelectorAll('.cadeira');
 
-    const { data: turmaID, error: turmaIDError } = await supabaseClient
-        .from('turmas')
-        .select('*')
-        .eq('nome_turma', turmaEscolha);
+        let turmaEscolha = localStorage.getItem('turmaPick')
 
-    // console.log(turmaID)     
+        const { data: turmaID, error: turmaIDError } = await supabaseClient
+            .from('turmas')
+            .select('*')
+            .eq('nome_turma', turmaEscolha);
 
-    const { data: alunos, error: turmaError } = await supabaseClient
-        .from('alunos')
-        .select('id, nome')
-        .eq('turma_id', turmaID[0].id)
+        // console.log(turmaID)     
 
-    // console.log(alunos)
+        const { data: alunos, error: turmaError } = await supabaseClient
+            .from('alunos')
+            .select('id, nome')
+            .eq('turma_id', turmaID[0].id)
 
-    const alunosOrdenados = alunos.sort((a, b) => a.nome.localeCompare(b.nome));
-    // console.log(alunosOrdenados) 
+        // console.log(alunos)
 
-    const ulAlunos = document.getElementById('ulAlunos')
-    const h1Aluno = document.getElementById('h1Aluno')
-    for (const aluno of alunosOrdenados) {
-        try {
-            // Obter turma pelo nome
+        const alunosOrdenados = alunos.sort((a, b) => a.nome.localeCompare(b.nome));
+        // console.log(alunosOrdenados) 
+
+        const ulAlunos = document.getElementById('ulAlunos')
+        const h1Aluno = document.getElementById('h1Aluno')
+        for (const aluno of alunosOrdenados) {
+            try {
+                // Obter turma pelo nome
+                const { data: conflito, error: turmaIDError } = await supabaseClient
+                    .from('salas')
+                    .select('*')
+                    .eq('aluno_id', aluno.id)
+                    .single();
+
+                if (!conflito) {
+                    const liAluno = document.createElement('li');
+                    const divAlunoLi = document.createElement('div');
+                    divAlunoLi.setAttribute('draggable', 'true');
+                    divAlunoLi.setAttribute('data-idAluno', aluno.id);
+                    divAlunoLi.appendChild(liAluno);
+                    divAlunoLi.classList.add('aluno');
+                    divAlunoLi.id = `aluno${aluno.id}`;
+                    liAluno.textContent = abreviarNome(aluno.nome);
+                    ulAlunos.appendChild(divAlunoLi);
+
+                    // Adicionar evento ao elemento
+                    liAluno.addEventListener('click', () => {
+                        h1Aluno.textContent = abreviarNome(aluno.nome);
+                        alunoEscolhido = aluno.id;
+                    });
+                }
+
+
+            } catch (error) {
+                console.error('Erro inesperado ao processar aluno:', error);
+            }
+        }
+
+        for (const cadeira of cadeiras) {
+
+            const numeroCadeira = cadeira.getAttribute('data-numeroCadeira');
+    
             const { data: conflito, error: turmaIDError } = await supabaseClient
                 .from('salas')
                 .select('*')
-                .eq('aluno_id', aluno.id)
+                .eq('cadeira_numero', numeroCadeira)
                 .single();
-
-            if(!conflito){
-                const liAluno = document.createElement('li');
-                const divAlunoLi = document.createElement('div');
-                divAlunoLi.setAttribute('draggable', 'true');
-                divAlunoLi.setAttribute('data-idAluno', aluno.id);
-                divAlunoLi.appendChild(liAluno);
-                divAlunoLi.classList.add('aluno');
-                divAlunoLi.id = `aluno${aluno.id}`;
-                liAluno.textContent = abreviarNome(aluno.nome);
-                ulAlunos.appendChild(divAlunoLi);
-        
-                // Adicionar evento ao elemento
-                liAluno.addEventListener('click', () => {
-                    h1Aluno.textContent = abreviarNome(aluno.nome);
-                    alunoEscolhido = aluno.id;
-                });
+    
+    
+            if (conflito) {
+                const divAluno = document.createElement('div')
+                divAluno.classList.add('aluno')
+                divAluno.id = `aluno${conflito.aluno_id}`
+                divAluno.setAttribute('data-idAluno', conflito.aluno_id);
+    
+                divAluno.setAttribute('draggable', 'true');
+                const liAluno = document.createElement('li')
+    
+                const { data: aluno, error: turmaIDError } = await supabaseClient
+                    .from('alunos')
+                    .select('*')
+                    .eq('id', conflito.aluno_id)
+                    .single();
+    
+                liAluno.textContent = abreviarNome(aluno.nome)
+                divAluno.appendChild(liAluno)
+                cadeira.appendChild(divAluno)
             }
-    
-            
-        } catch (error) {
-            console.error('Erro inesperado ao processar aluno:', error);
         }
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+    } finally {
+        esconderLoading(); // Esconde o indicador
     }
+    // console.log('oi')
 
-    for (const cadeira of cadeiras) {
 
-        const numeroCadeira = cadeira.getAttribute('data-numeroCadeira');
+   
 
-        const { data: conflito, error: turmaIDError } = await supabaseClient
-        .from('salas')
-        .select('*')
-        .eq('cadeira_numero', numeroCadeira)
-        .single();
-
-        
-        if(conflito){
-            const divAluno = document.createElement('div')
-            divAluno.classList.add('aluno')
-            divAluno.id = `aluno${conflito.aluno_id}`
-            divAluno.setAttribute('data-idAluno', conflito.aluno_id);
-
-            divAluno.setAttribute('draggable', 'true');
-            const liAluno = document.createElement('li')
-
-            const { data: aluno, error: turmaIDError } = await supabaseClient
-            .from('alunos')
-            .select('*')
-            .eq('id', conflito.aluno_id)
-            .single();
-
-            liAluno.textContent = abreviarNome(aluno.nome)
-            divAluno.appendChild(liAluno)
-            cadeira.appendChild(divAluno)
-        }
-    }
-    
     // setarAtributos()
 
 })
@@ -358,7 +379,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             liTurma.textContent = `${nomeTurma} - ${nomeMateria}`
             dropdown.appendChild(liTurma)
 
-            
+
             liTurma.addEventListener('click', () => {
                 localStorage.setItem('professorTurmaEscolhida', turmaMateria.turma_id)
                 localStorage.setItem('professorTurmaMatEscolhida', TM.id)
