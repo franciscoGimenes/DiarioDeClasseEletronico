@@ -734,3 +734,36 @@ tbody tr:hover {
     /* Aumentar o tamanho ao ser clicado */
   }
 }
+
+.spinner {
+  width: 3em;
+  height: 3em;
+  cursor: not-allowed;
+  border-radius: 50%;
+  border: 2px solid #444;
+  box-shadow: -10px -10px 10px #d4d4d4, 0px -10px 10px 0px #5e5e5e, 10px -10px 10px #bb1c1c, 10px 0 10px #ff0b0b, 10px 10px 10px 0px#bbbbbb, 0 10px 10px 0px #161616, -10px 10px 10px 0px #e04848;
+  animation: rot55 0.7s linear infinite;
+  display: none;
+  position: fixed;
+  top: 70%;
+  right: 10%;
+  /* transform: translate(-50%, -50%); */
+  z-index: 1;
+}
+
+.spinnerin {
+  border: 2px solid #444;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rot55 {
+  to {
+    transform: rotate(360deg);
+  }
+}
