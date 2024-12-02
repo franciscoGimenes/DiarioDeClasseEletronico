@@ -264,7 +264,6 @@ button:focus {
         height: 100%; /* Altura total da tela */
         overflow: auto; /* Habilita rolagem se necessário */
         background-color: rgba(0, 0, 0, 0.4); /* Fundo semitransparente */
-        display: flex; /* Usar flexbox para centralizar */
         justify-content: center; /* Centraliza horizontalmente */
         align-items: center; /* Centraliza verticalmente */
     }
@@ -276,7 +275,7 @@ button:focus {
         border: 1px solid #888;
         border-radius: 10px;
         width: 35%;
-        height: 17.5%;
+        height: auto;
     }
 
     .modal-content2 {
@@ -291,6 +290,8 @@ button:focus {
 
     #titleEtapaModal {
         margin: 0 0 20px 0;
+        display: flex;
+        gap: 5px;
     }
 
     .close {
