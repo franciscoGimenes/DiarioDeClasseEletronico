@@ -15,18 +15,21 @@ document.getElementById('login-form').addEventListener('submit', async function 
     });
 
     if (error) {
+        alert('Erro ao tentar fazer login: ' + error.message);
         return;
     }
 
     // Verifique se a sessão foi criada
     const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
     if (sessionError || !sessionData?.session) {
+        alert('Erro ao obter a sessão. Por favor, tente novamente.');
         return;
     }
 
     const userId = sessionData.session.user.id;
 
     if (!userId) {
+        alert('Usuário não encontrado. Por favor, tente novamente.');
         return;
     }
 
@@ -37,10 +40,12 @@ document.getElementById('login-form').addEventListener('submit', async function 
         .eq('id', userId);
 
     if (profileError) {
+        alert('Erro ao buscar o perfil do usuário: ' + profileError.message);
         return;
     }
 
     if (!profile || profile.length === 0) {
+        alert('Perfil do usuário não encontrado.');
         return;
     }
 
@@ -48,13 +53,14 @@ document.getElementById('login-form').addEventListener('submit', async function 
 
     // Checa o tipo de usuário e redireciona conforme necessário
     if (userProfile.tipo_usuario === 'coordenador') {
+        // alert('Login bem-sucedido! Redirecionando para a página do coordenador...');
         window.location.href = './GestaoSESI/index.html';
     } else if (userProfile.tipo_usuario === 'professor') {
+        // alert('Login bem-sucedido! Redirecionando para a página do professor...');
         window.location.href = './sistema/index.html';
     } else {
-        // Se necessário, você pode adicionar um tratamento adicional aqui
+        alert('Tipo de usuário não reconhecido. Entre em contato com o suporte.');
     }
 
-    localStorage.setItem('authUuid', userId)
-
+    localStorage.setItem('authUuid', userId);
 });

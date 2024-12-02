@@ -145,7 +145,7 @@ function showModal(modal, etapas) {
         button.addEventListener('click', () => {
             localStorage.setItem('etapaSelecionada', i);
             console.log(`Etapa ${i} selecionada e armazenada no localStorage`);
-            window.location.href='./observacoes'
+            window.location.href='./anotacoes'
         });
         
         modalContent.appendChild(button);
