@@ -24,6 +24,9 @@ document.getElementById('sair').addEventListener('click', async () => {
         localStorage.setItem('authUuid', '');
     }
 })
+document.querySelector('.voltarBtn').addEventListener('click', async () => {
+    window.location.href = './../index.html';
+})
 
 let formattedDate = ''
 let prettyData = ''
@@ -381,6 +384,48 @@ async function populateTable() {
 populateTable()
 
 document.getElementById('btnSave').addEventListener('click', async () => {
+    // const switches = document.querySelectorAll('.switch input[type="checkbox"]');
+    const professorTurmaMatEscolhida = localStorage.getItem('professorTurmaMatEscolhida');
+    const trAlunos = document.querySelectorAll('.trAluno')
+    const etapaSelecionada = localStorage.getItem('etapaSelecionada');
+    // console.log(switches)
+
+    for (const trAluno of trAlunos) {
+        const idAluno = trAluno.getAttribute('data-alunoId');
+        const swtc = trAluno.querySelector('.switch input[type="checkbox"]').checked
+
+
+        try {
+            const response = await fetch('http://localhost:3000/mandar_faltas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    aluno_id: idAluno,
+                    etapa_id: etapaSelecionada,
+                    falta: swtc
+                }),
+            });
+    
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                console.error('Erro ao enviar faltas', errorResponse.error);
+                alert('Erro ao enviar faltas: ' + errorResponse.error);
+                return;
+            }
+    
+            const successMessage = await response.json();
+            console.log(successMessage.message);
+            // alert('faltas foram enviadas!');
+        } catch (error) {
+            console.error('Erro ao realizar update:', error.message);
+            // alert('Erro ao realizar update: ' + error.message);
+        }
+    }
+    alert('As faltas foram enviadas')
+})
+document.getElementById('btnSave-responsivo').addEventListener('click', async () => {
     // const switches = document.querySelectorAll('.switch input[type="checkbox"]');
     const professorTurmaMatEscolhida = localStorage.getItem('professorTurmaMatEscolhida');
     const trAlunos = document.querySelectorAll('.trAluno')

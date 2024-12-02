@@ -217,6 +217,7 @@ body {
 
 #alunosTitle{
     color: #E5383B;
+    margin: 0;
 }
 
 .lista-alunos {
@@ -224,6 +225,7 @@ body {
     max-height: 530px; 
     overflow-y: auto; 
     padding: 10px;
+    margin-bottom: 5%;
   }
   
   .lista-alunos ul {
@@ -247,6 +249,5 @@ body {
   }
 
   #salvar{
-
     margin: 0;
 }
